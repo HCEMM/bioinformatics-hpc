@@ -1,0 +1,35 @@
+name: bioinfo-hpc
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # QC
+  - fastqc
+  - trimmomatic
+  - fastp
+  - multiqc
+
+  # Alignment-based RNA-seq
+  - hisat2
+  - star
+  - samtools
+  - subread      # featureCounts
+  - bedtools
+  - seqkit
+
+
+  # Pseudo-alignment
+  - salmon
+
+  # Data access
+  - sra-tools
+
+  # R and Bioconductor
+  - r-base
+  - r-tidyverse
+  - r-pheatmap
+  - r-ggplot2
+  - bioconductor-deseq2
+  - bioconductor-limma
+  - bioconductor-tximport
+  - bioconductor-org.hs.eg.db
