@@ -121,6 +121,49 @@ Interactive shell:
 srun --pty --nodes=1 --ntasks=1 --mem=8G --time=01:00:00 bash
 ```
 
+```
+fastqc $SCRATCH/*.fastq -o ./
+```
+
+More threads
+```
+srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=4 -
+-time=01:00:00 bash
+```
+
+```
+fastqc -t 4 $SCRATCH/raw_data/*.fastq.gz -o ./
+```
+>Now 4 files are processed paralelly!
+
+Collect, combine files:
+```
+multiqc ./
+```
+------------------
+### Trimming
+# Iterating through the fatsq files and doing the trimming
+```bash
+for f in *_1.fq.gz
+do
+  rv=${f/'_1.fq.gz'/'_2.fq.gz'}
+  o1_p=${f/'_1.fq.gz'/'_1_paired_trimmed.fq'}
+  o1_up=${f/'_1.fq.gz'/'_1_unpaired_trimmed.fq'}
+  o2_p=${f/'_1.fq.gz'/'_2_paired_trimmed.fq'}
+  o2_up=${f/'_1.fq.gz'/'_2_unpaired_trimmed.fq'}
+  log=${f/'_1.fq.gz'/'_trim.out.log'}
+  java -jar $TRIM PE -threads 10\
+    $f $rv $o1_p $o1_up $o2_p $o2_up \
+    ILLUMINACLIP:/bigdisk/users/mpapp/tools/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:25:10 \
+    LEADING:3 \
+    TRAILING:3 \
+    SLIDINGWINDOW:4:20 \
+    MINLEN:25 2> $log
+done
+```
+
+
+
 
 
 
