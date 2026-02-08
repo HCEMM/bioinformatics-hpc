@@ -46,13 +46,13 @@ then try activating the environment again!
 ----------------------
 
 ## Content
-1. Data download (*fasterq-dump*)
-2. Quality Control (*fastqc*)
-3. Trimming (*trimmomatic*)
+1. [Data download](./01_data/data_access.md) (*fasterq-dump*)
+2. [Quality Control](./02_QC/quality_control.md) (*fastqc*)
+3. [Trimming](./03_trimming/trimming.md) (*trimmomatic*)
 4. MultiQC (*multiqc*)
-5. Alignment (*STAR* OR *Hisat2*)
-6. Counting (*featureCounts*)
-7. Differential expression analysis (*DESeq2* in R)
+5. [Alignment](./05_alignment/alignment.md) (*STAR* OR *Hisat2*)
+6. [Counting](./06_counting/counting.md) (*featureCounts*)
+7. [Differential expression analysis](./07_DE/diff_expression.md) (*DESeq2* in R)
 
 ## References
 - Course content is based on HBCTraining website (Harvard Chan Bioinformatics Core) - doi.org/10.5281/zenodo.5833880
