@@ -94,3 +94,9 @@ The following table summarizes general guidelines for what to check at each step
 | Alignment     | STAR        | Mapping rate (%)         | Reads aligned to genome | > 80% |
 | Counting      | featureCounts | Assigned reads (%)     | Reads assigned to genes | > 60% |
 
+---------------
+------------
+|Previous|Home|Next|
+|--------|----|----|
+|[Alignment](../04_alignment/)|[Home](../README.md)|[Differential Expression Analysis](../07_DE/diff_expression.md)|
+     

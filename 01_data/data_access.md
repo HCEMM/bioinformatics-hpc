@@ -90,3 +90,8 @@ Look at the downloaded files and investigate:
 - files sizes before and after comperssion?
 - what happened after ```split-files```?
 - 
+
+------------------
+|Previous|Home|Next|
+|--------|----|----|
+|[Pre-training](../00_pretraining/pretraining.md)|[Home](../README.md)|[Quality Control](../02_QC/quality_control.md)

@@ -114,4 +114,9 @@ For all the available options, see [STAR's documentation](https://github.com/ale
 
 </details>
 
+
+------------
+|Previous|Home|Next|
+|--------|----|----|
+|[Trimming](../03_trimming/)|[Home](../README.md)|[Counting](../05_counting/counting.md)|
      

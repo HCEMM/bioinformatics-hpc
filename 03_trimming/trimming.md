@@ -111,3 +111,7 @@ TrimmomaticPE: Completed successfully
 
 </details>
 
+-------------
+|Previous|Home|Next|
+|--------|----|----|
+|[Quality Control](../02_QC/quality_control.md)|[Home](../README.md)|[Alignment](../04_alignment/alignment.md)|

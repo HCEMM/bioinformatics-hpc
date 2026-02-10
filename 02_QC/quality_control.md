@@ -121,3 +121,9 @@ multiqc ./
 
 **Examine output:**
 ![MultiQC](../static/figures/02_MultiQC.png)
+
+-------------
+
+|Previous|Home|Next|
+|--------|----|----|
+|[Data Access](../01_data/data_access.md)|[Home](../README.md)|[Trimming](../03_trimming/trimming.md)
