@@ -24,6 +24,45 @@ This dataset contains RNA-seq data from human airway smooth muscle (hASM) cells 
 | SRR1039517 | Treated   |
 
 ---
+<details><summary><strong>Conda Enviroment Setup</strong></summary>
+
+### Enviroment setup
+Load Miniconda:
+```bash
+module load miniconda3
+OR
+ml miniconda3
+```
+Check:
+```bash
+conda --version
+    conda 25.11.1
+```
+
+Create our environment:
+```bash
+conda create -f bioinfo-hpc.yml
+```
+
+Activate environment:
+```bash
+conda activate bioinfo-hpc
+```
+
+<details><summary>Problems</summary>
+
+If conda environment is not activated, try:
+```bash
+/opt/miniconda3/bin/conda init bash
+source ~/.bashrc
+```
+then try activating the environment again!
+
+</details>
+</details>
+
+----------
+
 ## Data download steps
 **Open HPC interactive shell:**
 ```bash

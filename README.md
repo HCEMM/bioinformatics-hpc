@@ -8,8 +8,18 @@ Instructors: Joao Sequeira, Maria Kavoosi, Istvan Szepesi-Nagy
 This course introduces advanced bioinformatics techniques within high-performance computing (HPC) environments. Participants will learn to efficiently manage computational workflows, leverage HPC resources, and apply bioinformatics tools to analyze biological datasets. By the end of the course, students will gain hands-on experience in combining computational power with cutting-edge bioinformatics approaches.
 
 ---
+## Content
+1. [Data download](./01_data/data_access.md) (*fasterq-dump*)
+2. [Quality Control](./02_QC/quality_control.md) (*fastqc*)
+3. [Trimming](./03_trimming/trimming.md) (*trimmomatic*)
+4. MultiQC (*multiqc*)
+5. [Alignment](./05_alignment/alignment.md) (*STAR* OR *Hisat2*)
+6. [Counting](./06_counting/counting.md) (*featureCounts*)
+7. [Differential expression analysis](./07_DE/diff_expression.md) (*DESeq2* in R)
+--------------
+<details><summary><strong>Conda Enviroment Setup</strong></summary>
 
-## Enviroment setup
+### Enviroment setup
 Load Miniconda:
 ```bash
 module load miniconda3
@@ -42,17 +52,8 @@ source ~/.bashrc
 then try activating the environment again!
 
 </details>
+</details>
 
-----------------------
-
-## Content
-1. [Data download](./01_data/data_access.md) (*fasterq-dump*)
-2. [Quality Control](./02_QC/quality_control.md) (*fastqc*)
-3. [Trimming](./03_trimming/trimming.md) (*trimmomatic*)
-4. MultiQC (*multiqc*)
-5. [Alignment](./05_alignment/alignment.md) (*STAR* OR *Hisat2*)
-6. [Counting](./06_counting/counting.md) (*featureCounts*)
-7. [Differential expression analysis](./07_DE/diff_expression.md) (*DESeq2* in R)
 
 ## References
 - Course content is based on HBCTraining website (Harvard Chan Bioinformatics Core) - doi.org/10.5281/zenodo.5833880

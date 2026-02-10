@@ -1,4 +1,44 @@
 ### 3. Trimming
+
+<details><summary><strong>Conda Enviroment Setup</strong></summary>
+
+### Enviroment setup
+Load Miniconda:
+```bash
+module load miniconda3
+OR
+ml miniconda3
+```
+Check:
+```bash
+conda --version
+    conda 25.11.1
+```
+
+Create our environment:
+```bash
+conda create -f bioinfo-hpc.yml
+```
+
+Activate environment:
+```bash
+conda activate bioinfo-hpc
+```
+
+<details><summary>Problems</summary>
+
+If conda environment is not activated, try:
+```bash
+/opt/miniconda3/bin/conda init bash
+source ~/.bashrc
+```
+then try activating the environment again!
+
+</details>
+</details>
+
+----------------
+
 ### Iterating through the fatsq files and doing the trimming
 Trimming is the process of removing low quality read sequences due to missed detections based on Q-value scores in FASTQ files. It is an optional step after QC, to move further with only good quality data.
 

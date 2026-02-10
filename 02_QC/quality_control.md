@@ -1,4 +1,43 @@
 ## 2. Quality check (QC)
+<details><summary><strong>Conda Enviroment Setup</strong></summary>
+
+### Enviroment setup
+Load Miniconda:
+```bash
+module load miniconda3
+OR
+ml miniconda3
+```
+Check:
+```bash
+conda --version
+    conda 25.11.1
+```
+
+Create our environment:
+```bash
+conda create -f bioinfo-hpc.yml
+```
+
+Activate environment:
+```bash
+conda activate bioinfo-hpc
+```
+
+<details><summary>Problems</summary>
+
+If conda environment is not activated, try:
+```bash
+/opt/miniconda3/bin/conda init bash
+source ~/.bashrc
+```
+then try activating the environment again!
+
+</details>
+</details>
+
+----------------
+
 > We have to check the fastq files quailty before proceeding!
 
 List the first lines of one fastq file:
