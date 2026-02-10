@@ -8,6 +8,11 @@ Instructors: Joao Sequeira, Maria Kavoosi, Istvan Szepesi-Nagy
 This course introduces advanced bioinformatics techniques within high-performance computing (HPC) environments. Participants will learn to efficiently manage computational workflows, leverage HPC resources, and apply bioinformatics tools to analyze biological datasets. By the end of the course, students will gain hands-on experience in combining computational power with cutting-edge bioinformatics approaches.
 
 ---
+
+## General bioinformatics pipeline
+![Pipeline](./static/figures/00_readme_pipeline.png)
+*Source: HBCTraining - Introduction to RNA-Seq using high-performance computing*
+
 ## Content
 1. [Data download](./01_data/data_access.md) (*fasterq-dump*)
 2. [Quality Control](./02_QC/quality_control.md) (*fastqc*)
