@@ -1,3 +1,4 @@
+[Back to Home](../README.md)
 ## 2. Quality check (QC)
 <details><summary><strong>Conda Enviroment Setup</strong></summary>
 
@@ -84,21 +85,20 @@ Q = -10 x log10(Perror) --> Perror = 10^-(39/10) --> 0.0126% chance that the nuc
 **FastQC is used to check the per-base quality of FASTQ files.**
 
 **Start interactive shell:**
-```
+```bash
 srun --pty --nodes=1 --ntasks=1 --mem=8G --time=01:00:00 bash
 ```
 
 **Run quality check for all files:**
-```
+```bash
 fastqc $SCRATCH/*.fastq -o ./
 ```
 
 > We can reduce the analysis times using multiple threads!
 -----------------
 **Start interactive shell with more threads:**
-```
-srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=4 -
--time=01:00:00 bash
+```bash
+srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=4 --time=01:00:00 bash
 ```
 
 Use the ```--help``` option to see how to set multiple threads for FastQC! (set 4 threads)

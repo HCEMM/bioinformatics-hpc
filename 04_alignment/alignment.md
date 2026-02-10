@@ -1,3 +1,4 @@
+[Back to Home](../README.md)
 ## 4. RNA-seq Alignment with STAR
 
 <details><summary><strong>Conda Enviroment Setup</strong></summary>

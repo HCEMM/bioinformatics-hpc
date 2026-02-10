@@ -1,3 +1,4 @@
+[Back to Home](../README.md)
 ### 3. Trimming
 
 <details><summary><strong>Conda Enviroment Setup</strong></summary>
@@ -52,9 +53,8 @@ To perform trimming, we use ```Trimmomatic```, allowing many options to trim and
 
 Perform the trimming of the file ```SRR1039509``` based on the following general scheme of Trimmomatic. (See ```--help``` or the [User manual](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf) for further information)
 
-```
-srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 -
--time=01:00:00 bash
+```bash
+srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
 ```
 
 ```bash
