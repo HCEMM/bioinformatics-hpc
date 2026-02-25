@@ -36,57 +36,117 @@ ml r-base64 r-limma r-biobase
 nano limma_analysis.R
 ```
 
-**Copy and paste the script below:***
+**Copy and paste the script below:**
+<details><summary>Rscript</summary>
+
 ```R
-install.packages("BiocManager")
-BiocManager::install("edgeR")
-
 library(limma)
-library(edgeR)
 
-# Load counts (remove annotation columns if needed)
-counts <- read.delim("counts.txt", comment.char="#", row.names=1)
-counts <- counts[,6:ncol(counts)]   # adjust if needed
+options(echo=F)
+# 1. SETUP: Get files
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) < 2) stop("Usage: Rscript analysis.R <counts.txt> <gtf_file.gtf>")
 
-group <- factor(c("Control","Control","Treatment","Treatment"))
+# 2. LOAD DATA (featureCounts format)
+data <- read.delim(args[1], comment.char="#", row.names=1)
+counts <- data[, 6:ncol(data)] 
 
-dge <- DGEList(counts=counts, group=group)
-dge <- calcNormFactors(dge)
+# RENAME COLUMNS: Simplify long file paths to just the SRR ID
+colnames(counts) <- gsub(".*(SRR[0-9]+).*", "\\1", colnames(counts))
+short_names <- colnames(counts) # Save for plotting labels later
 
+# 3. MAP NAMES (Fast extraction from GTF)
+# This keeps it simple: it pulls ID and Name directly
+gtf <- readLines(args[2])
+gtf_genes <- gtf[grep('gene_id "([^"]+)";.*gene_name "([^"]+)";', gtf)]
+ids <- gsub('.*gene_id "([^"]+)";.*', '\\1', gtf_genes)
+syms <- gsub('.*gene_name "([^"]+)";.*', '\\1', gtf_genes)
+gene_map <- unique(data.frame(ID=ids, Symbol=syms))
+gene_map <- gene_map[!duplicated(gene_map$ID), ]
+
+# 4. PREPARE: log-CPM and Groups
+group <- factor(c("Control", "Dex", "Control", "Dex"))
+# Built-in limma way to convert counts to log2-scale
+logCPM <- log2(t(t(counts + 0.5) / (colSums(counts) + 1) * 1e6))
+
+# 5. ANALYSIS: The Limma Pipeline
 design <- model.matrix(~group)
-v <- voom(dge, design, plot=FALSE)
+fit <- lmFit(logCPM, design)
+fit <- eBayes(fit, trend=TRUE)
 
-fit <- lmFit(v, design)
-fit <- eBayes(fit)
-
+# 6. MERGE: Get results and add the Symbols
 results <- topTable(fit, coef=2, number=Inf)
+results$ID <- rownames(results)
+results <- merge(results, gene_map, by.x="ID", by.y="ID", all.x=TRUE)
+results$Symbol <- ifelse(is.na(results$Symbol), results$ID, results$Symbol)
+results <- results[order(results$adj.P.Val), ]
+write.csv(results, "final_results.csv", row.names=FALSE)
 
-write.csv(results, "limma_results.csv")
-
-# Volcano plot
-pdf("volcano_plot.pdf")
-volcanoplot(fit, coef=2, highlight=10, names=rownames(counts))
+# --- THE SIMPLIFIED PLOTS ---
+# 7. PLOT: PCA (Using limma's plotMDS)
+# This handles the PC1/PC2 percentages automatically!
+pdf("1_pca_plot.pdf")
+plotMDS(logCPM, labels = short_names, col=as.numeric(group), pch=19, main="PCA - Sample Clustering")
+legend("topleft", legend=levels(group), col=1:2, pch=19)
 dev.off()
 
-# Barplot of top 10 genes
-top10 <- head(results, 10)
-
-pdf("top10_barplot.pdf")
-barplot(top10$logFC,
-        names.arg=rownames(top10),
-        las=2,
-        main="Top 10 Differentially Expressed Genes",
-        ylab="log2 Fold Change")
+# 8. PLOT: Volcano (Using limma's volcanoplot)
+pdf("2_volcano_plot.pdf")
+# volcanoplot uses the 'fit' object directly
+volcanoplot(fit, coef=2, main="Volcano Plot", highlight=10, names=results$Symbol[match(rownames(fit), results$ID)])
+abline(h=-log10(0.05), col="red", lty=2)
 dev.off()
 
-#get adj-p-values also TODO
-#PCA also
-#A heatmap also
-#Distance between samples (calc distance matrix in deseq2)
+# 9. PLOT: Boxplots of Top 4 Genes
+pdf("3_top_genes_boxplots.pdf")
+par(mfrow=c(2,2))
+for (i in 1:12) {
+  gene_id <- results$ID[i]
+  boxplot(logCPM[gene_id, ] ~ group, main=results$Symbol[i], 
+          col=c("skyblue", "orange"), ylab="Relative Expression (log2 CPM)")
+  stripchart(logCPM[gene_id, ] ~ group, add=TRUE, vertical=TRUE, pch=21, bg="white")
+}
+dev.off()
+
+# 10. PLOT: Sample Distance Heatmap
+# This helps see if "Control" samples cluster together
+sampleDists <- as.matrix(dist(t(logCPM)))
+
+pdf("4_sample_distance_heatmap.pdf")
+heatmap(sampleDists, 
+        main="Sample Euclidean Distance (Similarity)",
+        symm = TRUE,
+        col = cm.colors(256),  # Simple built-in colors
+        margins = c(10,10))
+dev.off()
+
+# 11. PLOT: Top 50 Genes Heatmap
+# This shows the "Global" pattern of expression
+top50_ids <- results$ID[1:50]
+heatmap_matrix <- logCPM[top50_ids, ]
+
+# Replace IDs with Symbols for the heatmap labels
+rownames(heatmap_matrix) <- results$Symbol[1:50]
+
+RdBu <- colorRampPalette(c("blue", "white", "red"))(256)
+
+pdf("5_global_heatmap.pdf")
+heatmap(as.matrix(heatmap_matrix), 
+        main="Top 50 Differentially Expressed Genes",
+        Colv = NA,           # Keep samples in order (Control, Dex, Control, Dex)
+        scale = "row",       # Standardizes rows so we see relative changes
+        col = RdBu,   # Using a built-in limma color palette
+        margins = c(10,5))
+dev.off()
+
+cat("\nDone! Results saved to CSV and 5 PDFs generated.\n")
+```
+</details>
+
+---------------
+**Run the script:**
+```bash
+Rscript limma_analysis.R /path/to/featureCounts/output/ASM_Dex_count_USER.txt /common/workshop_data/reference/hg38/release_115/gene_names.gtf
 ```
 
-```
-Rscript limma_analysis.R
-```
-
-FileZilla will be used
+>Copy the resulting *pdf* files to your computer and, interpret the results!
