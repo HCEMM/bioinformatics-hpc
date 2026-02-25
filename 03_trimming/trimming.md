@@ -1,43 +1,6 @@
 [Back to Home](../README.md)
 ### 3. Trimming
 
-<details><summary><strong>Conda Enviroment Setup</strong></summary>
-
-### Enviroment setup
-Load Miniconda:
-```bash
-module load miniconda3
-OR
-ml miniconda3
-```
-Check:
-```bash
-conda --version
-    conda 25.11.1
-```
-
-Create our environment:
-```bash
-conda create -f bioinfo-hpc.yml
-```
-
-Activate environment:
-```bash
-conda activate bioinfo-hpc
-```
-
-<details><summary>Problems</summary>
-
-If conda environment is not activated, try:
-```bash
-/opt/miniconda3/bin/conda init bash
-source ~/.bashrc
-```
-then try activating the environment again!
-
-</details>
-</details>
-
 ----------------
 
 ### Iterating through the fatsq files and doing the trimming
@@ -54,8 +17,13 @@ To perform trimming, we use ```Trimmomatic```, allowing many options to trim and
 Perform the trimming of the file ```SRR1039509``` based on the following general scheme of Trimmomatic. (See ```--help``` or the [User manual](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf) for further information)
 
 ```bash
-srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
+salloc --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
 ```
+
+```bash
+ml trimmomatic
+```
+
 
 ```bash
 trimmomatic PE -threads <number_of_threads> \
@@ -74,27 +42,31 @@ trimmomatic PE -threads <number_of_threads> \
 ```bash
 fastqc -t 4 -o /$USER/03_trimming/trimmed \
     $SCRATCH/$USER/trimmed_data/*.fastq.gz
-
-multiqc $SCRATCH/$USER/raw_data $SCRATCH/$USER/trimmed_data -o ./
 ```
 
--------------
+-------------------
+### Before trimming FASTQC output
+![before trimming](../static/figures/03_trimming_before.png)
+
+------------
+
+### After trimming FASTQC output
+![before trimming](../static/figures/03_trimming_after.png)
+
 
 <details><summary>Solution</summary>
 
 ```bash
 trimmomatic PE -threads 8 \
-  sample_1.fastq.gz sample_2.fastq.gz \
-  sample_1.trimmed.fastq.gz sample_1.unpaired.fastq.gz \
-  sample_2.trimmed.fastq.gz sample_2.unpaired.fastq.gz \
+  $COMMON/raw_gzip/SRR1039509_1.fastq.gz $COMMON/raw_gzip/SRR1039509_2.fastq.gz \
+  SRR1039509_1.trimmed.fastq.gz SRR1039509_1.unpaired.fastq.gz \
+  SRR1039509_2.trimmed.fastq.gz SRR1039509_2.unpaired.fastq.gz \
   ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 \
   SLIDINGWINDOW:4:20 \
   LEADING:3 \
   TRAILING:3 \
   MINLEN:50
 
-
-trimmomatic PE -threads 8 $SCRATCH/raw_gzip/SRR1039509_1.fastq.gz  $SCRATCH/raw_gzip/SRR1039509_2.fastq.gz $SCRATCH/trimmed_data/SRR1039509_1.trimmed.fastq.gz $SCRATCH/trimmed_data/SRR1039509_1.unpaired.fastq.gz $SCRATCH/trimmed_data/SRR1039509_2.trimmed.fastq.gz $SCRATCH/trimmed_data/SRR1039509_2.unpaired.fastq.gz ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 SLIDINGWINDOW:4:20 LEADING:3 TRAILING:3 MINLEN:50
 ```
 
 </details>
