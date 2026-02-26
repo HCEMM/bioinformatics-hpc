@@ -130,11 +130,17 @@ RdBu <- colorRampPalette(c("blue", "white", "red"))(256)
 
 pdf("5_global_heatmap.pdf")
 heatmap(as.matrix(heatmap_matrix), 
-        main="Top 50 Differentially Expressed Genes",
+        main="Top 50 Differentially Expressed Genes (z-score)",
         Colv = NA,
         scale = "row",       # Standardizes rows so we see relative changes
         col = RdBu, 
         margins = c(10,5))
+
+legend("bottomleft",
+       legend = c("High (relative)", "Mean", "Low (relative)"),
+       fill = c("red", "white", "blue"),
+       border = NA,
+       bty = "n")
 dev.off()
 
 cat("\nDone! Results saved to CSV and 5 PDFs generated.\n")
@@ -148,3 +154,9 @@ Rscript limma_analysis.R /path/to/featureCounts/output/ASM_Dex_count_USER.txt /c
 ```
 
 >Copy the resulting *pdf* files to your computer and, interpret the results!
+
+
+-------------------
+|Previous|Home|Next|
+|--------|----|----|
+|[Counting](../05_counting/counting.md)|[Home](../README.md)| |
