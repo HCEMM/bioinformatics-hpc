@@ -1,47 +1,10 @@
 [Back to Home](../README.md)
 ## 2. Quality check (QC)
-<details><summary><strong>Conda Enviroment Setup</strong></summary>
 
-### Enviroment setup
-Load Miniconda:
-```bash
-module load miniconda3
-OR
-ml miniconda3
-```
-Check:
-```bash
-conda --version
-    conda 25.11.1
-```
-
-Create our environment:
-```bash
-conda create -f bioinfo-hpc.yml
-```
-
-Activate environment:
-```bash
-conda activate bioinfo-hpc
-```
-
-<details><summary>Problems</summary>
-
-If conda environment is not activated, try:
-```bash
-/opt/miniconda3/bin/conda init bash
-source ~/.bashrc
-```
-then try activating the environment again!
-
-</details>
-</details>
-
-----------------
 
 > We have to check the fastq files quailty before proceeding!
 
-List the first lines of one fastq file:
+List the first 4 lines of one fastq file:
 ```fastq
 @SRR1039508.1 HWI-ST177:290:C0TECACXX:1:1101:1225:2130 length=63
 CATTGCTGATACCAANNNNNNNNGCATTCCTCAAGGTCTTCCTCCTTCCCTTACGGAATTACA
@@ -86,18 +49,25 @@ Q = -10 x log10(Perror) --> Perror = 10^-(39/10) --> 0.0126% chance that the nuc
 
 **Start interactive shell:**
 ```bash
-srun --pty --nodes=1 --ntasks=1 --mem=8G --time=01:00:00 bash
+salloc --nodes=1 --ntasks=1 --mem=8G --time=01:00:00 bash
+```
+
+**Load necessary tools:**
+```bash
+ml fastqc
 ```
 
 **Run quality check for all files:**
 ```bash
-fastqc $SCRATCH/*.fastq -o ./
+fastqc /common/workshop_data/raw_data/*.fastq -o ./	#Directing output to the current directory
 ```
 
-> We can reduce the analysis times using multiple threads!
+> **We can reduce the analysis times using multiple threads!**
 -----------------
-**Start interactive shell with more threads:**
+**Start a new interactive shell with more threads:**
 ```bash
+exit #Important: close current session
+
 srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=4 --time=01:00:00 bash
 ```
 
@@ -107,13 +77,14 @@ Use the ```--help``` option to see how to set multiple threads for FastQC! (set 
 <details><summary>Solution</summary>
 
 ```bash
-fastqc -t 4 $SCRATCH/raw_data/*.fastq.gz -o ./
+fastqc -t 4 /common/workshop_data/raw_data/*.fastq.gz -o ./
 ```
 >Now 4 files are processed paralelly at once!
 </details>
 
 
 ----------------
+### MultiQC tool
 **Collect and combine files with MultiQC easily:**
 ```
 multiqc ./

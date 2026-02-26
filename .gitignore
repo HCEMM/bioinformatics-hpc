@@ -1,1 +1,13 @@
 *fastq*
+# Ignore everything
+*
+
+# Allow directories
+!*/
+
+# Allow markdown files
+!*.md
+
+!*.sbatch
+
+!*.pptx

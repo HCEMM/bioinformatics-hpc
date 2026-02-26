@@ -1,57 +1,22 @@
 [Back to Home](../README.md)
 ## 5. Gene-Level Read Counting with featureCounts
 
-<details><summary><strong>Conda Enviroment Setup</strong></summary>
-
-### Enviroment setup
-Load Miniconda:
-```bash
-module load miniconda3
-OR
-ml miniconda3
-```
-Check:
-```bash
-conda --version
-    conda 25.11.1
-```
-
-Create our environment:
-```bash
-conda create -f bioinfo-hpc.yml
-```
-
-Activate environment:
-```bash
-conda activate bioinfo-hpc
-```
-
-<details><summary>Problems</summary>
-
-If conda environment is not activated, try:
-```bash
-/opt/miniconda3/bin/conda init bash
-source ~/.bashrc
-```
-then try activating the environment again!
-
-</details>
-</details>
-
---------------
-
 After alignment with STAR, we convert BAM files into a **gene count matrix** for differential expression analysis using featureCounts (*from the Subread package*).
 
 This step assigns aligned reads to genes based on genome annotation (GTF).
 
-> GTF file is located in /data/reference/hg38/release_115/Homo_sapiens.GRCh38.115.gtf
+> GTF file is located in **/common/reference/hg38/release_115/Homo_sapiens.GRCh38.115.gtf**
 
 ---------------
 ### Basic featureCounts Command for Paired-end data
 
 **Start interactive session:**
 ```bash
-srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
+salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=02:00:00 bash
+```
+
+```
+ml subread
 ```
 
 **Run the featureCounts tool:**

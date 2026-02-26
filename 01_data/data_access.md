@@ -12,7 +12,7 @@ This dataset contains RNA-seq data from human airway smooth muscle (hASM) cells 
 - Ideal for presenting DE analysis concepts
 
 ### Dataset Size & Simplicity
-- Total samples: **8 RNA-seq datasets**  
+- Total samples: **4 RNA-seq datasets**  
   - 4 cell lines, treated vs untreated  
 - Small enough for hands-on HPC exercises, but biologically meaningful
 
@@ -25,71 +25,42 @@ This dataset contains RNA-seq data from human airway smooth muscle (hASM) cells 
 | SRR1039517 | Treated   |
 
 ---
-<details><summary><strong>Conda Enviroment Setup</strong></summary>
 
-### Enviroment setup
-Load Miniconda:
-```bash
-module load miniconda3
-OR
-ml miniconda3
-```
-Check:
-```bash
-conda --version
-    conda 25.11.1
-```
-
-Create our environment:
-```bash
-conda create -f bioinfo-hpc.yml
-```
-
-Activate environment:
-```bash
-conda activate bioinfo-hpc
-```
-
-<details><summary>Problems</summary>
-
-If conda environment is not activated, try:
-```bash
-/opt/miniconda3/bin/conda init bash
-source ~/.bashrc
-```
-then try activating the environment again!
-
-</details>
-</details>
-
-----------
 
 ## Data download steps
 **Open HPC interactive shell:**
 ```bash
-srun --pty --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 bash
+salloc --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 bash
 ```
 
-**Download data in paralell:**
+**Enviroment setup, load necessary tools:**
+```bash
+module load sratoolkit
+OR
+ml sratoolkit
+```
+
+**Download data in paralell - Example:**
 ```bash
 while read sra
 do
     fasterq-dump $sra \
     --split-files \
     --threads 4 \
-    --outdir $SCRATCH/$USER/raw_data
+    --outdir Path/To/Output/raw_data
 done < sra_accessions.txt
 ```
-**Compress FASTQ files:**
-```bash 
-gzip $SCRATCH/$USER/raw_data/*.fastq 
+**Compression of FASTQ files:**
+```bash
+gzip Path/To/Output/raw_data/*.fastq
 ```
+
+>Important: due to long downloading times, raw fastq files are shared in a common directory: ```/common/workshop_data/raw_data``` and ```/common/workshop_data/raw_gzip``` for the compressed files!
 
 **Excercies:**
 Look at the downloaded files and investigate:
 - files sizes before and after comperssion?
 - what happened after ```split-files```?
-- 
 
 ------------------
 |Previous|Home|Next|
