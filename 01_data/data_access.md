@@ -78,7 +78,7 @@ do
     --split-files \
     --threads 4 \
     --outdir $SCRATCH/$USER/raw_data
-done < sra_accession.txt
+done < sra_accessions.txt
 ```
 **Compress FASTQ files:**
 ```bash 
