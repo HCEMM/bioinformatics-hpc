@@ -24,7 +24,7 @@ DE analysis - R
 ## Perform statistical differential expression analysis
 
 ```bash
-salloc --pty --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 bash
+salloc --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 bash
 ```
 
 ```bash
@@ -43,7 +43,7 @@ nano limma_analysis.R
 library(limma)
 
 options(echo=F)
-# 1. SETUP: Get files
+# 1. SETUP: Get input files
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 2) stop("Usage: Rscript analysis.R <counts.txt> <gtf_file.gtf>")
 
@@ -53,9 +53,9 @@ counts <- data[, 6:ncol(data)]
 
 # RENAME COLUMNS: Simplify long file paths to just the SRR ID
 colnames(counts) <- gsub(".*(SRR[0-9]+).*", "\\1", colnames(counts))
-short_names <- colnames(counts) # Save for plotting labels later
+short_names <- colnames(counts)
 
-# 3. MAP NAMES (Fast extraction from GTF)
+# 3. MAP NAMES Ensmbl IDs to Gene names
 # This keeps it simple: it pulls ID and Name directly
 gtf <- readLines(args[2])
 gtf_genes <- gtf[grep('gene_id "([^"]+)";.*gene_name "([^"]+)";', gtf)]
@@ -64,12 +64,12 @@ syms <- gsub('.*gene_name "([^"]+)";.*', '\\1', gtf_genes)
 gene_map <- unique(data.frame(ID=ids, Symbol=syms))
 gene_map <- gene_map[!duplicated(gene_map$ID), ]
 
-# 4. PREPARE: log-CPM and Groups
+# 4. PREPARE: log-CPM and Groups (set up factor groups based on the column order in the count.txt file)
 group <- factor(c("Control", "Dex", "Control", "Dex"))
-# Built-in limma way to convert counts to log2-scale
+# Convert counts to log2-scale
 logCPM <- log2(t(t(counts + 0.5) / (colSums(counts) + 1) * 1e6))
 
-# 5. ANALYSIS: The Limma Pipeline
+# 5. ANALYSIS: The Limma Pipeline, fitting Bayesean distribution function
 design <- model.matrix(~group)
 fit <- lmFit(logCPM, design)
 fit <- eBayes(fit, trend=TRUE)
@@ -82,9 +82,8 @@ results$Symbol <- ifelse(is.na(results$Symbol), results$ID, results$Symbol)
 results <- results[order(results$adj.P.Val), ]
 write.csv(results, "final_results.csv", row.names=FALSE)
 
-# --- THE SIMPLIFIED PLOTS ---
+#####--- THE SIMPLIFIED PLOTS --- #####
 # 7. PLOT: PCA (Using limma's plotMDS)
-# This handles the PC1/PC2 percentages automatically!
 pdf("1_pca_plot.pdf")
 plotMDS(logCPM, labels = short_names, col=as.numeric(group), pch=19, main="PCA - Sample Clustering")
 legend("topleft", legend=levels(group), col=1:2, pch=19)
@@ -92,12 +91,11 @@ dev.off()
 
 # 8. PLOT: Volcano (Using limma's volcanoplot)
 pdf("2_volcano_plot.pdf")
-# volcanoplot uses the 'fit' object directly
 volcanoplot(fit, coef=2, main="Volcano Plot", highlight=10, names=results$Symbol[match(rownames(fit), results$ID)])
 abline(h=-log10(0.05), col="red", lty=2)
 dev.off()
 
-# 9. PLOT: Boxplots of Top 4 Genes
+# 9. PLOT: Boxplots of Top Genes
 pdf("3_top_genes_boxplots.pdf")
 par(mfrow=c(2,2))
 for (i in 1:12) {
@@ -109,14 +107,14 @@ for (i in 1:12) {
 dev.off()
 
 # 10. PLOT: Sample Distance Heatmap
-# This helps see if "Control" samples cluster together
+# This helps see if "Control" samples cluster together with Eucledian distance
 sampleDists <- as.matrix(dist(t(logCPM)))
 
 pdf("4_sample_distance_heatmap.pdf")
 heatmap(sampleDists, 
         main="Sample Euclidean Distance (Similarity)",
         symm = TRUE,
-        col = cm.colors(256),  # Simple built-in colors
+        col = cm.colors(256),
         margins = c(10,10))
 dev.off()
 
@@ -133,9 +131,9 @@ RdBu <- colorRampPalette(c("blue", "white", "red"))(256)
 pdf("5_global_heatmap.pdf")
 heatmap(as.matrix(heatmap_matrix), 
         main="Top 50 Differentially Expressed Genes",
-        Colv = NA,           # Keep samples in order (Control, Dex, Control, Dex)
+        Colv = NA,
         scale = "row",       # Standardizes rows so we see relative changes
-        col = RdBu,   # Using a built-in limma color palette
+        col = RdBu, 
         margins = c(10,5))
 dev.off()
 

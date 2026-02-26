@@ -30,7 +30,7 @@ This dataset contains RNA-seq data from human airway smooth muscle (hASM) cells 
 ## Data download steps
 **Open HPC interactive shell:**
 ```bash
-salloc --pty --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 bash
+salloc --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 bash
 ```
 
 **Enviroment setup, load necessary tools:**
@@ -55,7 +55,7 @@ done < sra_accession.txt
 gzip $SCRATCH/$USER/raw_data/*.fastq 
 ```
 
->Important: due to long downloading times, raw fastq files are shared in a common directory: ```/common/data/bioinfo-hpc/raw_data``` and ```/common/data/bioinfo-hpc/raw_gzip``` for the compressed files!
+>Important: due to long downloading times, raw fastq files are shared in a common directory: ```/common/workshop_data/raw_data``` and ```/common/workshop_data/raw_gzip``` for the compressed files!
 
 **Excercies:**
 Look at the downloaded files and investigate:

@@ -6,25 +6,31 @@
 ### Iterating through the fatsq files and doing the trimming
 Trimming is the process of removing low quality read sequences due to missed detections based on Q-value scores in FASTQ files. It is an optional step after QC, to move further with only good quality data.
 
-**Example:**
+### **Example:**
+
 ![Trimming before and after](../static/figures/03_trimming.png)
 
 ----------------
-> Luckily our data is high quality FASTQ files from Illumina Hiseq instruments with overall Q-score > 30 in all positions for all files (see MultiQC outputs).
+> *Luckily our data is high quality FASTQ files from Illumina Hiseq instruments with overall Q-score > 30 in all positions for all files (see MultiQC outputs).*
 
 To perform trimming, we use ```Trimmomatic```, allowing many options to trim and modify our FASTQ files.
 
 Perform the trimming of the file ```SRR1039509``` based on the following general scheme of Trimmomatic. (See ```--help``` or the [User manual](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf) for further information)
 
 ```bash
-salloc --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
+salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
 ```
 
 ```bash
 ml trimmomatic
 ```
 
+**Make an output folder for the trimmed files:**
+```bash
+mkdir trimmed_data
+```
 
+**Change the following parameters to start trimming:**
 ```bash
 trimmomatic PE -threads <number_of_threads> \
   <forward_reads_input> <reverse_reads_input> \
@@ -40,8 +46,8 @@ trimmomatic PE -threads <number_of_threads> \
 **Perform GC again and compare the files before and after trimming!**
 
 ```bash
-fastqc -t 4 -o /$USER/03_trimming/trimmed \
-    $SCRATCH/$USER/trimmed_data/*.fastq.gz
+mkdir -p trimmed_qc
+fastqc -t 4 ./trimmed_data/*.fastq.gz -o ./trimmed_qc
 ```
 
 -------------------
@@ -58,9 +64,9 @@ fastqc -t 4 -o /$USER/03_trimming/trimmed \
 
 ```bash
 trimmomatic PE -threads 8 \
-  $COMMON/raw_gzip/SRR1039509_1.fastq.gz $COMMON/raw_gzip/SRR1039509_2.fastq.gz \
-  SRR1039509_1.trimmed.fastq.gz SRR1039509_1.unpaired.fastq.gz \
-  SRR1039509_2.trimmed.fastq.gz SRR1039509_2.unpaired.fastq.gz \
+  /common/workshop_data/raw_gzip/SRR1039509_1.fastq.gz /common/workshop_data/raw_gzip/SRR1039509_2.fastq.gz \
+  trimmed_data/SRR1039509_1.trimmed.fastq.gz trimmed_data/SRR1039509_1.unpaired.fastq.gz \
+  trimmed_data/SRR1039509_2.trimmed.fastq.gz trimmed_data/SRR1039509_2.unpaired.fastq.gz \
   ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 \
   SLIDINGWINDOW:4:20 \
   LEADING:3 \

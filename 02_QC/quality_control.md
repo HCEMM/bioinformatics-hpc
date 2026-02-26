@@ -49,7 +49,7 @@ Q = -10 x log10(Perror) --> Perror = 10^-(39/10) --> 0.0126% chance that the nuc
 
 **Start interactive shell:**
 ```bash
-salloc --pty --nodes=1 --ntasks=1 --mem=8G --time=01:00:00 bash
+salloc --nodes=1 --ntasks=1 --mem=8G --time=01:00:00 bash
 ```
 
 **Load necessary tools:**
@@ -59,14 +59,14 @@ ml fastqc
 
 **Run quality check for all files:**
 ```bash
-fastqc $SCRATCH/*.fastq -o ./
+fastqc /common/workshop_data/raw_data/*.fastq -o ./	#Directing output to the current directory
 ```
 
-> We can reduce the analysis times using multiple threads!
+> **We can reduce the analysis times using multiple threads!**
 -----------------
 **Start a new interactive shell with more threads:**
 ```bash
-exit #close current session
+exit #Important: close current session
 
 srun --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=4 --time=01:00:00 bash
 ```
@@ -77,13 +77,14 @@ Use the ```--help``` option to see how to set multiple threads for FastQC! (set 
 <details><summary>Solution</summary>
 
 ```bash
-fastqc -t 4 $SCRATCH/raw_data/*.fastq.gz -o ./
+fastqc -t 4 /common/workshop_data/raw_data/*.fastq.gz -o ./
 ```
 >Now 4 files are processed paralelly at once!
 </details>
 
 
 ----------------
+### MultiQC tool
 **Collect and combine files with MultiQC easily:**
 ```
 multiqc ./

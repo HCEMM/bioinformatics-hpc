@@ -1,8 +1,6 @@
 [Back to Home](../README.md)
 ## 5. Gene-Level Read Counting with featureCounts
 
---------------
-
 After alignment with STAR, we convert BAM files into a **gene count matrix** for differential expression analysis using featureCounts (*from the Subread package*).
 
 This step assigns aligned reads to genes based on genome annotation (GTF).
@@ -14,7 +12,7 @@ This step assigns aligned reads to genes based on genome annotation (GTF).
 
 **Start interactive session:**
 ```bash
-salloc --pty --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=02:00:00 bash
+salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=02:00:00 bash
 ```
 
 ```
