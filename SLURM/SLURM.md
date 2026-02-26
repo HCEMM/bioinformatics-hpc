@@ -1,9 +1,136 @@
-This is the SLURM part!
-Intro text to SLURM (maybe external link to docs)
+[Back to Home](../README.md)
+## SLURM: Job Scheduling on HPC
 
-## Data download
+This section covers SLURM (Simple Linux Utility for Resource Management), the workload manager used on many high-performance computing clusters.
 
-## FastQC
+SLURM allows users to:
+- Request computational resources
+- Submit batch jobs
+- Run interactive sessions
+- Monitor job status
+- Manage parallel workloads efficiently
+
+Instead of running heavy computations on login nodes, SLURM schedules jobs on compute nodes, ensuring fair resource usage and system stability.
+
+Typical workflow:
+- Request resources (salloc or sbatch)
+- Load required modules
+- Run analysis
+- Collect outputs
+- Exit session
+
+Understanding SLURM is essential for reproducible and scalable bioinformatics analyses on HPC systems.
+
+[Working in an HPC environment](https://hbctraining.github.io/Intro-to-bulk-RNAseq/lessons/03_working_on_HPC.html) (*External link*)
+
+## HPC cluster overvirview
+![HPC cluster](../static/figures/08_compute_cluster.png)
+
+*Image source: HBCTraining*
+
+## 1. Data download
+
+Edit ```data_access.sbatch``` file to start the data download for ```SRR1039508```
+- Specify the output folder path!
+
+<details><summary><strong>data_access.sbatch</strong></summary>
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=sra_download
+#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --output=sra_download_%j.out
+#SBATCH --error=sra_download_%j.err
+
+# Load module
+module load sratoolkit
+
+# Create output directory
+OUTDIR="Path/To/Output/raw_data"
+mkdir -p $OUTDIR
+
+# Download SRA run and split paired-end reads
+fasterq-dump SRR1039508 \
+    --split-files \
+    --threads 4 \
+    --outdir $OUTDIR
+
+echo "Download complete"
+```
+</details>
+
+>------------------
+
+**Submit your first job!**
+```bash
+sbatch data_access.sbatch
+```
+
+**See running jobs**
+```bash
+squeue
+
+OR 
+
+squeue -u {YOUR_USERNAME}
+```
+
+**Cancel the jobs!**
+```bash
+scancel 123456 	# JOBID
+
+squeue			# check status
+```
+
+
+## 2. FastQC
+
+**Modify and run the quality control for all fastq files!**
+- Change the job-name
+- Specify the CPUs
+- Check all parameters, submit the job
+<details><summary><strong>qc.sbatch</strong></summary>
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=YOUR_NAME_fastqc
+#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --output=fastqc_%j.out
+#SBATCH --error=fastqc_%j.err
+
+# -----------------------------
+# Load required module
+# -----------------------------
+module load fastqc
+
+# -----------------------------
+# USER MUST MODIFY THESE
+# -----------------------------
+THREADS=4
+INPUT_DIR="/common/workshop_data/raw_data"
+OUTPUT_DIR="./fastqc_results"
+
+# -----------------------------
+# Create output directory
+# -----------------------------
+mkdir -p $OUTPUT_DIR
+
+# -----------------------------
+# Run FastQC
+# -----------------------------
+fastqc -t $THREADS ${INPUT_DIR}/*.fastq.gz -o $OUTPUT_DIR
+
+echo "FastQC analysis complete"
+```
+</details>
+
+**Open the output and error files**
+- What is the output showing? 
+- Were there any error messages during the run?
 
 ## STAR
 We use a single SLURM job that loops through all FASTQ files in a selected folder and processes them sequentially.
