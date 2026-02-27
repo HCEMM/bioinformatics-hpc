@@ -48,11 +48,11 @@ do
     --split-files \
     --threads 4 \
     --outdir Path/To/Output/raw_data
-done < sra_accession.txt
+done < sra_accessions.txt
 ```
 **Compression of FASTQ files:**
-```bash 
-gzip $SCRATCH/$USER/raw_data/*.fastq 
+```bash
+gzip Path/To/Output/raw_data/*.fastq
 ```
 
 >Important: due to long downloading times, raw fastq files are shared in a common directory: ```/common/workshop_data/raw_data``` and ```/common/workshop_data/raw_gzip``` for the compressed files!
