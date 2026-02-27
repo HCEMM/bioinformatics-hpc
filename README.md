@@ -21,7 +21,7 @@ This course introduces advanced bioinformatics techniques within high-performanc
 5. [Counting](./05_counting/counting.md) (*featureCounts*)
 6. [Pseudo-alignment](./06_salmon/pseudo_aligner.md) (*Salmon*)
 7. [Differential expression analysis](./07_DE/diff_expression.md) (*limma* in R)
-8. [SLURM](./SLURM/SLURM.md) (*Task submissions on HPC systems*)
+8. [LURM](./08_Slurm/SLURM.md) (*Task submissions on HPC systems*)
 --------------
 <details><summary><strong>Conda Enviroment Setup</strong></summary>
 
