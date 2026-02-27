@@ -304,3 +304,9 @@ Rscript ../07_DE/limma_analysis.R \
 
 echo "limma analysis completed."
 ```
+</details>
+
+-------------------
+|Previous|Home|Next|
+|--------|----|----|
+|[Differential Expression Analysis](../07_DE/diff_expression.md)|[Home](../README.md)|[]()|

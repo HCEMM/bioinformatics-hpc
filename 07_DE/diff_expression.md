@@ -159,4 +159,4 @@ Rscript limma_analysis.R /path/to/featureCounts/output/ASM_Dex_count_USER.txt /c
 -------------------
 |Previous|Home|Next|
 |--------|----|----|
-|[Counting](../05_counting/counting.md)|[Home](../README.md)| |
+|[Counting](../05_counting/counting.md)|[Home](../README.md)|[Differential Expression Analysis](../08_Slurm/SLURM.md)|
