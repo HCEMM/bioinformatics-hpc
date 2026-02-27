@@ -18,7 +18,7 @@ To perform trimming, we use ```Trimmomatic```, allowing many options to trim and
 Perform the trimming of the file ```SRR1039509``` based on the following general scheme of Trimmomatic. (See ```--help``` or the [User manual](http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf) for further information)
 
 ```bash
-salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
+salloc --nodes=1 --ntasks=1 --mem=16G --cpus-per-task=16 --time=10:00:00
 ```
 
 ```bash
@@ -47,16 +47,16 @@ trimmomatic PE -threads <number_of_threads> \
 
 ```bash
 trimmomatic PE -threads 16 \
-/common/workshop_data/raw_gzip/SRR1039509_1.fastq.gz /common/workshop_data/raw_gzip/SRR1039509_2.fastq.gz \
-./workshop_results/trimmed_data/SRR1039509_1.trimmed.fastq.gz \
-./workshop_results/trimmed_data/SRR1039509_1.unpaired.fastq.gz \
-./workshop_results/trimmed_data/SRR1039509_2.trimmed.fastq.gz \
-./workshop_results/trimmed_data/SRR1039509_2.unpaired.fastq.gz \
-ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 \
-SLIDINGWINDOW:4:20 \
-LEADING:3 \
-TRAILING:3 \
-MINLEN:50
+  /common/workshop_data/raw_gzip/SRR1039509_1.fastq.gz /common/workshop_data/raw_gzip/SRR1039509_2.fastq.gz \
+  ./workshop_results/trimmed_data/SRR1039509_1.trimmed.fastq.gz \
+  ./workshop_results/trimmed_data/SRR1039509_1.unpaired.fastq.gz \
+  ./workshop_results/trimmed_data/SRR1039509_2.trimmed.fastq.gz \
+  ./workshop_results/trimmed_data/SRR1039509_2.unpaired.fastq.gz \
+  ILLUMINACLIP:/common/workshop_data/other/TruSeq3-PE.fa:2:30:10 \
+  SLIDINGWINDOW:4:20 \
+  LEADING:3 \
+  TRAILING:3 \
+  MINLEN:50
 ```
 </details>
 
