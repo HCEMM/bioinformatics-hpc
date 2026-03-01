@@ -16,7 +16,7 @@ ml star
 STAR --runThreadN 16 \
      --runMode genomeGenerate \
      --genomeDir /common/workshop_data/index \
-     --genomeFastaFiles /common/workshop_data/reference/hg38/release_115/human_genome.fa \
+     --genomeFastaFiles /common/workshop_data/reference/hg38/release_115/Homo_sapiens.GRCh38.dna.primary_assembly.fa \
      --sjdbGTFfile /common/workshop_data/reference/hg38/release_115/gene_names.gtf \
      --sjdbOverhang 100
 ```
@@ -33,6 +33,7 @@ salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=16 --time=01:00:00
 ```
 
 ```bash
+ml zlib
 ml star
 ```
 
@@ -43,6 +44,7 @@ mkdir ./workshop_results/STAR_outputs
 
 **Run the following command to align the reads to the reference genome:**
 ```bash
+SAMPLE=SRR1039508
 STAR --runThreadN 16 \
          --genomeDir /common/workshop_data/index \
          --readFilesIn /common/workshop_data/raw_gzip/${SAMPLE}_1.fastq.gz /common/workshop_data/raw_gzip/${SAMPLE}_2.fastq.gz \
@@ -62,6 +64,25 @@ STAR --runThreadN 16 \
 | SRR1039509 | Treated   |
 | SRR1039517 | Treated   |
 
+
+*How to run all samples in a single command?*
+
+<details><summary>Solution</summary>
+
+```bash
+for SAMPLE in SRR1039508 SRR1039512 SRR1039509 SRR1039517; do
+  STAR --runThreadN 16 \
+       --genomeDir /common/workshop_data/index \
+       --readFilesIn /common/workshop_data/raw_gzip/${SAMPLE}_1.fastq.gz /common/workshop_data/raw_gzip/${SAMPLE}_2.fastq.gz \
+       --readFilesCommand zcat \
+       --outFileNamePrefix ./workshop_results/STAR_outputs/${SAMPLE}_ \
+       --outSAMtype BAM SortedByCoordinate \
+       --outSAMunmapped Within \
+        --outSAMattributes Standard \
+       --quantMode GeneCounts TranscriptomeSAM
+done
+```
+</details>
 
 ------------
 |Previous|Home|Next|
