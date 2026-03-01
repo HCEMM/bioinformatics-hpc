@@ -1,6 +1,4 @@
 *fastq*
-# Ignore everything
-*
 
 # Allow directories
 !*/
@@ -13,3 +11,4 @@
 !*.pptx
 
 !*.png
+.DS_Store
