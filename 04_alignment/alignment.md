@@ -35,7 +35,7 @@ salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=16 --time=01:00:00
 ml star
 ```
 
-**Create an output directory:**
+**Create the output directory:**
 ```
 mkdir ./workshop_results/STAR_outputs
 ```
