@@ -24,7 +24,7 @@ ml subread
 mkdir -p ./workshop_results/featureCounts
 featureCounts -T 8 -p \
   -a /common/workshop_data/reference/hg38/release_115/Homo_sapiens.GRCh38.115.gtf \
-  -o ./workshop_results/featureCounts/ASM_Dex_count_jsequeira.txt \
+  -o ./workshop_results/featureCounts/ASM_Dex_count.txt \
   ./workshop_results/STAR_outputs/*_Aligned.sortedByCoord.out.bam
 ```
 

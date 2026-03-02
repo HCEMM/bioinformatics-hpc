@@ -10,7 +10,6 @@ Before alignment, STAR requires a pre-built genome index. If you don’t have on
 
 **DON'T RUN**
 ```bash
-ml zlib
 ml star
 
 STAR --runThreadN 16 \
@@ -33,11 +32,10 @@ salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=16 --time=01:00:00
 ```
 
 ```bash
-ml zlib
 ml star
 ```
 
-**Create an output directory:**
+**Create the output directory:**
 ```
 mkdir ./workshop_results/STAR_outputs
 ```
