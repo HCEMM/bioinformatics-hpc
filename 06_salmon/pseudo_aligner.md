@@ -42,8 +42,23 @@ for SAMPLE in SRR1039508 SRR1039512 SRR1039509 SRR1039517; do
 done
 ```
 
---------------
+**Exercise:**
 
+Some questions to think about:
+1. Why no BAM files?
+2. When is Salmon not appropriate to use?
+
+<details><summary>Answers</summary>
+
+1. Salmon does quasi-mapping, so there is no base-to-base alignment stored.
+
+2. Salmon is not appropriate to use when precise genomic localization of reads is required, such as in variant calling or when studying complex genomic rearrangements.
+
+**Rule of thumb:** Salmon = fast quantification of known transcripts, not genome discovery.
+
+</details>
+
+--------------
 |Previous|Home|Next|
 |--------|----|----|
 |[Counting](../05_counting/counting.md)|[Home](../README.md)|[Differential Expression Analysis](../07_DE/diff_expression.md)|

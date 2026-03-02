@@ -35,17 +35,18 @@ Rscript /common/workshop_data/scripts/limma_analysis.R ./workshop_results/featur
 
 >Copy the resulting *pdf* files to your computer and, interpret the results!
 
-**How would you show 20 IDs on the volcano plot?**
+**Exercise:**
 
-First, copy the R script to your home directory:
-```bash
-cp /common/workshop_data/scripts/limma_analysis.R ~/
-```
+1. How would you show 20 IDs on the volcano plot?
+2. Why adjust p-values?
+3. Are two samples enough for a robust DE analysis? What are the limitations of this dataset?
+4. Why represent gene expression changes as log2 fold changes instead of raw fold changes?
 
-<details><summary>Expected output</summary>
+<details><summary>Answers</summary>
 
-Edit the R script as follows:
+1. First, copy the R script to your home directory: `cp /common/workshop_data/scripts/limma_analysis.R ~/`
 
+Then, edit as such:
 ```R
 pdf(file.path(outdir, "2_volcano_plot.pdf"))
 volcanoplot(fit, coef=2, main="Volcano Plot", highlight=20,
@@ -53,6 +54,12 @@ volcanoplot(fit, coef=2, main="Volcano Plot", highlight=20,
 abline(h=-log10(0.05), col="red", lty=2)
 dev.off()
 ```
+
+2. Multi-testing will increase the chance of false positives, as multiple comparisons are being made [relevant xkcd](https://xkcd.com/882/).
+
+3. Two samples per group is not ideal for robust DE analysis, as it limits the ability to estimate variability and can lead to false positives or negatives. With only two samples, it's difficult to distinguish true biological differences from random variation.
+
+4. Log2 fold changes are used because they provide a symmetric scale for up- and down-regulation, making it easier to interpret changes in gene expression. A log2 fold change of 1 means a doubling of expression, while -1 means halving, which is more intuitive than raw fold changes that can be skewed by large values.
 
 </details>
 

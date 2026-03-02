@@ -91,6 +91,34 @@ multiqc ./workshop_results/fastqc --outdir ./workshop_results/multiqc
 **Examine output:**
 ![MultiQC](../static/figures/02_MultiQC.png)
 
+**Exercise:**
+
+Some questions to think about:
+1. If Q30 = 0.1% error, what is Q20 error rate? 
+```
+Formula: Q = -10 x log10(Perror) --> Perror = 10^(-Q/10)
+```
+2. Why is Q-score logarithmic?
+3. If last 10 bases are always lower quality - what does that suggest?
+4. Why might GC-rich regions show lower quality?
+
+<details><summary>Answers</summary>
+
+1. Each +10 = 10× lower error.
+```
+Q20 → 1% error
+Q30 → 0.1% error
+Q40 → 0.01% error
+```
+
+2. Human perception handles log scales better; Error rates span multiple orders of magnitude.
+
+3. Illumina chemistry degrades over cycles.
+
+4. GC regions can form secondary structures, affecting sequencing efficiency.
+
+</details>
+
 -------------
 
 |Previous|Home|Next|

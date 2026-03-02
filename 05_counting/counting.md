@@ -61,8 +61,40 @@ The following table summarizes general guidelines for what to check at each step
 | Counting      | featureCounts | Assigned reads (%)     | Reads assigned to genes | > 60% |
 
 ---------------
+
+**Exercise:**
+
+Some questions to think about:
+1. Check the count matrix. What is the structure?
+2. How many genes have zero counts in all samples?
+3. How to get the genes expressed only in treated?
+4. Why longer genes have more counts?
+
+<details><summary>Answers</summary>
+
+1. After the first two header lines, we get this info:
+```
+| Column Number | Column Name   | Description               |
+|---------------|--------------|----------------------------|
+| 1             | Geneid       | Ensembl gene ID            |
+| 2             | Chr          | Chromosome                 |
+| 3             | Start        | Start position             |
+| 4             | End          | End position               |
+| 5             | Strand       | Strand (+ or -)            |
+| 6             | Length       | Gene length (bp)           |
+| 7+            | Sample counts| Raw counts per sample file |
+```
+
+2. `awk 'NR>2 {sum=0; for(i=7;i<=NF;i++) sum+=$i; if(sum==0) print $1}' ASM_Dex_count.txt | wc -l`
+
+3. `awk 'NR>2 {if(($7==0 && $9==0) && ($8>0 || $10>0)) print $1}' ASM_Dex_count.txt`
+
+4. Because longer genes have more sequence, they are more likely to have reads that align to them, leading to higher counts. This is a common bias in RNA-seq data, which is why normalization methods (like TPM or RPKM) account for gene length.
+
+</details>
+
 ------------
 |Previous|Home|Next|
 |--------|----|----|
-|[Alignment](../04_alignment/)|[Home](../README.md)|[Differential Expression Analysis](../07_DE/diff_expression.md)|
+|[Alignment](../04_alignment/)|[Home](../README.md)|[Salmon](../06_DE/pseudo_aligner.md)|
      

@@ -56,16 +56,52 @@ done < /common/bioinformatics-hpc/01_data/sra_accessions.txt
 ```
 **Compression of FASTQ files:**
 ```bash
-gzip /common/workshop_data/raw_data/*.fastq
+for file in /common/workshop_data/raw_data/*.fastq
+do
+  gzip -c "$file" > /common/workshop_data/raw_gzip/$(basename "$file").gz
+done
 ```
 
 >Important: due to long downloading times, raw fastq files are shared in a common directory: ```/common/workshop_data/raw_data``` and ```/common/workshop_data/raw_gzip``` for the compressed files!
 
 **Exercise:**
 Look at the downloaded files and investigate:
-- files sizes before and after compression?
-- what does the ```--split-files``` parameter change?
-- how can you read the compressed files?
+1. what does the -c tag do in the gzip command?
+2. how to keep the original files after compression?
+3. files sizes before and after compression?
+4. what does the ```--split-files``` parameter change?
+5. how can you "take a look" at the compressed files?
+6. number of reads in each file?
+
+<details><summary>Answers</summary>
+
+1. The `-c` tag in the gzip command tells gzip to write the compressed output to standard output (stdout) instead of creating a .gz file. This allows you to redirect the compressed data to a specific location or file name using the `>` operator.
+
+2. Use the `-k` option.
+
+3. `du -sh /common/workshop_data/raw_data/*.fastq; du -sh /common/workshop_data/raw_gzip/*.fastq.gz`
+
+4. Splits into paired-end files: _1 and _2 for forward and reverse reads, respectively.
+
+5. Use `zcat` or `gunzip -c` with head to read compressed files without decompressing them first.
+
+6. Use `zcat file.fastq.gz | wc -l` and use a calculator; or `seqkit stats file.fastq.gz` to get read counts directly (but takes ~3 min).
+
+```
+processed files:  8 / 8 [======================================] ETA: 0s. done
+file                                                  format  type    num_seqs        sum_len  min_len  avg_len  max_len
+/common/workshop_data/raw_gzip/SRR1039508_1.fastq.gz  FASTQ   DNA   22,935,521  1,444,937,823       63       63       63
+/common/workshop_data/raw_gzip/SRR1039508_2.fastq.gz  FASTQ   DNA   22,935,521  1,444,937,823       63       63       63
+/common/workshop_data/raw_gzip/SRR1039509_1.fastq.gz  FASTQ   DNA   21,155,707  1,332,809,541       63       63       63
+/common/workshop_data/raw_gzip/SRR1039509_2.fastq.gz  FASTQ   DNA   21,155,707  1,332,809,541       63       63       63
+/common/workshop_data/raw_gzip/SRR1039512_1.fastq.gz  FASTQ   DNA   28,136,282  1,772,585,766       63       63       63
+/common/workshop_data/raw_gzip/SRR1039512_2.fastq.gz  FASTQ   DNA   28,136,282  1,772,585,766       63       63       63
+/common/workshop_data/raw_gzip/SRR1039517_1.fastq.gz  FASTQ   DNA   34,298,260  2,160,790,380       63       63       63
+/common/workshop_data/raw_gzip/SRR1039517_2.fastq.gz  FASTQ   DNA   34,298,260  2,160,790,380       63       63       63
+```
+
+</details>
+
 
 ------------------
 |Previous|Home|Next|

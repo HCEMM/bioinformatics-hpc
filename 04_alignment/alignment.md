@@ -10,7 +10,6 @@ Before alignment, STAR requires a pre-built genome index. If you don’t have on
 
 **DON'T RUN**
 ```bash
-ml zlib
 ml star
 
 STAR --runThreadN 16 \
@@ -33,7 +32,6 @@ salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=16 --time=01:00:00
 ```
 
 ```bash
-ml zlib
 ml star
 ```
 
@@ -82,6 +80,29 @@ for SAMPLE in SRR1039508 SRR1039512 SRR1039509 SRR1039517; do
        --quantMode GeneCounts TranscriptomeSAM
 done
 ```
+</details>
+
+**Exercise:**
+
+Some questions to think about:
+1. What if `--readFilesCommand` zcat is removed?
+2. How to check just the mapping rates of all the files?
+3. And how many reads aligned uniquely?
+4. What if `--runThreadN 1`?
+5. Why does alignment rate never reach 100%?
+
+<details><summary>Answers</summary>
+
+1. If --readFilesCommand zcat is removed, STAR will fail :(
+
+2. `grep "Uniquely mapped reads %" ./workshop_results/STAR_outputs/*_Log.final.out`
+
+3. `grep "Uniquely mapped reads %" ./workshop_results/STAR_outputs/*_Log.final.out | awk '{print $NF}'`
+
+4. If `--runThreadN 1`, the alignment will run single-threaded, and will finish when we are all doctors.
+
+5. Sequencing errors, reads originating from unannotated regions, contamination, or reads that are too short or of low quality to be confidently aligned.
+
 </details>
 
 ------------

@@ -88,6 +88,23 @@ TrimmomaticPE: Completed successfully
 
 </details>
 
+**Exercise:**
+
+Some questions to think about:
+1. What happens if MINLEN:10? What if MINLEN:100?
+2. SLIDINGWINDOWS vs TRAILING, what is the difference?
+3. Does Trimmomatic provide other adapter files for different sequencing platforms?
+
+<details><summary>Answers</summary>
+
+1. MINLEN:10 would keep very short reads, which may not be useful for alignment and could increase noise. MINLEN:100 would discard all reads, which is also not very useful.
+
+2. SLIDINGWINDOW:4:20 scans a window of 4 bases and requires an average quality of 20 to keep the read, while TRAILING:3 removes bases from the end of the read if they fall below a quality of 3.
+
+3. `find /opt -name TruSeq3-PE.fa`
+
+</details>
+
 -------------
 |Previous|Home|Next|
 |--------|----|----|
