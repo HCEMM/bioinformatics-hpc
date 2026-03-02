@@ -21,10 +21,11 @@ ml subread
 
 **Run the featureCounts tool:**
 ```bash
+mkdir -p ./workshop_results/featureCounts
 featureCounts -T 8 -p \
-  -a PATH/TO/GTF/Homo_sapiens.GRCh38.115.gtf \
-  -o ASM_Dex_count_<USERNAME>.txt \
-  PATH/TO/STAR/OUTPUTS/*_Aligned.sortedByCoord.out.bam
+  -a /common/workshop_data/reference/hg38/release_115/Homo_sapiens.GRCh38.115.gtf \
+  -o ./workshop_results/featureCounts/ASM_Dex_count_jsequeira.txt \
+  ./workshop_results/STAR_outputs/*_Aligned.sortedByCoord.out.bam
 ```
 
 <details><summary>Expected output</summary>

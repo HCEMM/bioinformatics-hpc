@@ -18,9 +18,29 @@ Because Salmon maps reads to the transcriptome rather than the genome, accurate 
 >**Overall, Salmon provides a fast, accurate, and scalable solution for RNA-seq quantification, particularly well-suited for high-performance computing environments.**
 ----------------
 
-Optional: build Salmon index
+```bash
+# build Salmon index - DON'T RUN
+salmon index \
+  -t /common/workshop_data/reference/hg38/release_115/Homo_sapiens.GRCh38.cdna.all.fa \
+  -i /common/workshop_data/index/salmon/ \
+  -k 31 \
+  -p 16
 
-
+# Run Salmon for all samples
+for SAMPLE in SRR1039508 SRR1039512 SRR1039509 SRR1039517; do
+  salmon quant \
+    -i /common/workshop_data/index/salmon/ \
+    -l A \
+    -1 /common/workshop_data/raw_gzip/${SAMPLE}_1.fastq.gz \
+    -2 /common/workshop_data/raw_gzip/${SAMPLE}_2.fastq.gz \
+    -p 16 \
+    --validateMappings \
+    --seqBias \
+    --gcBias \
+    -g /common/workshop_data/reference/hg38/release_115/Homo_sapiens.GRCh38.115.gtf \
+    -o ./workshop_results/salmon/${SAMPLE}
+done
+```
 
 --------------
 

@@ -33,34 +33,39 @@ This dataset contains RNA-seq data from human airway smooth muscle (hASM) cells 
 salloc --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=02:00:00 bash
 ```
 
-**Enviroment setup, load necessary tools:**
+**Environment setup, load necessary tools:**
 ```bash
 module load sratoolkit
 OR
 ml sratoolkit
 ```
 
-**Download data in paralell - Example:**
+**Download data in parallel - Example:**
 ```bash
+# Inspect the list of SRA accessions
+cat /common/bioinformatics-hpc/01_data/sra_accessions.txt
+
+# Download the reads for each SRA accession
 while read sra
 do
     fasterq-dump $sra \
     --split-files \
     --threads 4 \
-    --outdir Path/To/Output/raw_data
-done < sra_accessions.txt
+    --outdir /common/workshop_data/raw_data
+done < /common/bioinformatics-hpc/01_data/sra_accessions.txt
 ```
 **Compression of FASTQ files:**
 ```bash
-gzip Path/To/Output/raw_data/*.fastq
+gzip /common/workshop_data/raw_data/*.fastq
 ```
 
 >Important: due to long downloading times, raw fastq files are shared in a common directory: ```/common/workshop_data/raw_data``` and ```/common/workshop_data/raw_gzip``` for the compressed files!
 
-**Excercies:**
+**Exercise:**
 Look at the downloaded files and investigate:
-- files sizes before and after comperssion?
-- what happened after ```split-files```?
+- files sizes before and after compression?
+- what does the ```--split-files``` parameter change?
+- how can you read the compressed files?
 
 ------------------
 |Previous|Home|Next|

@@ -10,11 +10,14 @@ Before alignment, STAR requires a pre-built genome index. If you don’t have on
 
 **DON'T RUN**
 ```bash
-STAR --runThreadN 8 \
+ml zlib
+ml star
+
+STAR --runThreadN 16 \
      --runMode genomeGenerate \
-     --genomeDir $SCRATCH/$USER/STAR_index \
-     --genomeFastaFiles /path/to/human_genome.fa \
-     --sjdbGTFfile /path/to/annotations.gtf \
+     --genomeDir /common/workshop_data/index \
+     --genomeFastaFiles /common/workshop_data/reference/hg38/release_115/Homo_sapiens.GRCh38.dna.primary_assembly.fa \
+     --sjdbGTFfile /common/workshop_data/reference/hg38/release_115/gene_names.gtf \
      --sjdbOverhang 100
 ```
 >Reference genome is accessible at **/common/workshop_data/reference/hg38/release_115/**
@@ -26,25 +29,27 @@ STAR --runThreadN 8 \
 In this step, RNA-seq reads are aligned to the human reference genome using STAR.
 
 ```bash
-salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=8 --time=01:00:00 bash
+salloc --nodes=1 --ntasks=1 --mem=8G --cpus-per-task=16 --time=01:00:00
 ```
 
 ```bash
+ml zlib
 ml star
 ```
 
 **Create an output directory:**
 ```
-mkdir ./STAR_outputs
+mkdir ./workshop_results/STAR_outputs
 ```
 
 **Run the following command to align the reads to the reference genome:**
 ```bash
-STAR --runThreadN 8 \
-         --genomeDir /PATH/TO/STAR_INDEX \
-         --readFilesIn /PATH/TO/READS/${SAMPLE}_1.fastq.gz /PATH/TO/READS/${SAMPLE}_2.fastq.gz \
+SAMPLE=SRR1039508
+STAR --runThreadN 16 \
+         --genomeDir /common/workshop_data/index \
+         --readFilesIn /common/workshop_data/raw_gzip/${SAMPLE}_1.fastq.gz /common/workshop_data/raw_gzip/${SAMPLE}_2.fastq.gz \
          --readFilesCommand zcat \
-         --outFileNamePrefix ./STAR_outputs/${SAMPLE}_ \
+         --outFileNamePrefix ./workshop_results/STAR_outputs/${SAMPLE}_ \
          --outSAMtype BAM SortedByCoordinate \
          --outSAMunmapped Within \
 	     --outSAMattributes Standard \
@@ -59,6 +64,25 @@ STAR --runThreadN 8 \
 | SRR1039509 | Treated   |
 | SRR1039517 | Treated   |
 
+
+*How to run all samples in a single command?*
+
+<details><summary>Solution</summary>
+
+```bash
+for SAMPLE in SRR1039508 SRR1039512 SRR1039509 SRR1039517; do
+  STAR --runThreadN 16 \
+       --genomeDir /common/workshop_data/index \
+       --readFilesIn /common/workshop_data/raw_gzip/${SAMPLE}_1.fastq.gz /common/workshop_data/raw_gzip/${SAMPLE}_2.fastq.gz \
+       --readFilesCommand zcat \
+       --outFileNamePrefix ./workshop_results/STAR_outputs/${SAMPLE}_ \
+       --outSAMtype BAM SortedByCoordinate \
+       --outSAMunmapped Within \
+        --outSAMattributes Standard \
+       --quantMode GeneCounts TranscriptomeSAM
+done
+```
+</details>
 
 ------------
 |Previous|Home|Next|

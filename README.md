@@ -17,10 +17,11 @@ This course introduces advanced bioinformatics techniques within high-performanc
 1. [Data download](./01_data/data_access.md) (*fasterq-dump*)
 2. [Quality Control](./02_QC/quality_control.md) (*fastqc*)
 3. [Trimming](./03_trimming/trimming.md) (*trimmomatic*)
-4. [Alignment](./04_alignment/alignment.md) (*STAR* OR *Hisat2*)
+4. [Alignment](./04_alignment/alignment.md) (*STAR*)
 5. [Counting](./05_counting/counting.md) (*featureCounts*)
 6. [Pseudo-alignment](./06_salmon/pseudo_aligner.md) (*Salmon*)
-7. [Differential expression analysis](./07_DE/diff_expression.md) (*DESeq2* in R)
+7. [Differential expression analysis](./07_DE/diff_expression.md) (*limma* in R)
+8. [SLURM](./08_Slurm/SLURM.md) (*Task submissions on HPC systems*)
 --------------
 <details><summary><strong>Conda Enviroment Setup</strong></summary>
 
