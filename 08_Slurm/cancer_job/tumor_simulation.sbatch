@@ -7,9 +7,10 @@
 #SBATCH --output=logs/%x_%A_%a.out
 #SBATCH --error=logs/%x_%A_%a.err
 
+ml python
 ml py-colorama
 
-SUBMIT_DIR=~/scripts/tumor_simulation
+SUBMIT_DIR=~/cancer_job
 
 cd $SUBMIT_DIR
 

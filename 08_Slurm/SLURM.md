@@ -43,18 +43,7 @@ sinfo --format=%all                         # all the details
 - How many cores?
 - Which partitions?
 
-## 1. Data download
-
-
-
-**Submit your first job!**
-```bash
-cd
-mkdir ./sbatch_scripts
-mkdir ./logs
-cp /common/bioinformatics-hpc/08_Slurm/data_download.sbatch ./sbatch_scripts/
-sbatch ./sbatch_scripts/data_download.sbatch
-```
+### Some useful Slurm commands
 
 **See running job**
 ```bash
@@ -69,7 +58,7 @@ scancel [jobid]
 sq                  # should be empty
 ```
 
-**Inspect the job**
+**Inspect a job**
 ```bash
 scontrol show job [jobid]
 ```
@@ -80,116 +69,63 @@ sacct -u {YOUR_USERNAME}
 sac                         # more informative
 ```
 
+## Test run
+
+```
+srun hostname
+```
+what does the printed value show?
+
+## 0. Tumor simulation
+
+```
+cp -r /common/bioinformatics-hpc/08_Slurm/cancer_job ~/
+cd ~/cancer_job
+sbatch tumor_simulation.sbatch
+bash monitor.sh
+```
+
+## 1. Data download
+
+**Submit your first job!**
+```bash
+cd
+mkdir ./sbatch_scripts
+mkdir ./logs
+cp /common/bioinformatics-hpc/08_Slurm/*.sbatch ./sbatch_scripts/
+sbatch ./sbatch_scripts/data_download.sbatch
+```
+
 ## 2. FastQC
 
 **Modify and run the quality control for all fastq files!**
-In the ```qc.sbatch``` file:
-- Change the job-name
-- Specify the CPUs
-- Check all parameters, submit the job
-<details><summary><strong>qc.sbatch</strong></summary>
 
-```bash
-#!/bin/bash
-#SBATCH --job-name=YOUR_NAME_fastqc
-#SBATCH --time=01:00:00
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=8G
-#SBATCH --output=fastqc_%j.out
-#SBATCH --error=fastqc_%j.err
-
-# -----------------------------
-# Load required module
-# -----------------------------
-module load fastqc
-
-# -----------------------------
-# USER MUST MODIFY THESE
-# -----------------------------
-THREADS=4
-INPUT_DIR="/common/workshop_data/raw_data"
-OUTPUT_DIR="./fastqc_results"
-
-# -----------------------------
-# Create output directory
-# -----------------------------
-mkdir -p $OUTPUT_DIR
-
-# -----------------------------
-# Run FastQC
-# -----------------------------
-fastqc -t $THREADS ${INPUT_DIR}/*.fastq.gz -o $OUTPUT_DIR
-
-echo "FastQC analysis complete"
 ```
-</details>
+sbatch qc.sbatch
+```
 
 **Open the output and error files**
 - What is the output showing? 
-- Were there any error messages during the run?
+- Were there any error messages during the run? Check `.err` file.
 
 ## 3. Trimming
 
 In this step, we will transition from running a single command to using Job Arrays. This allows us to submit one script that Slurm will automatically replicate for each of our 4 samples, assigning each a unique ```${SLURM_ARRAY_TASK_ID}```.
+
 **Modify the ```trimming.sbatch``` file to process all samples as separate sub-jobs!**
 1. Open the file ```nano trimming.sbatch```
-2. Add the Array SBATCH header ```#SBATCH --array=0-3``` to tell SLURM to launch 4 tasks
+2. The SBATCH header ```#SBATCH --array=0-3``` tells SLURM to launch 4 jobs
 3. Define the list of Samples
-4. Map the TASK IDs: ```SAMPLE=${SAMPLES[$SLURM_ARRAY_TASK_ID]}``` to ensure each sub-job picks a different file for trimming
+4.  ```SAMPLE=${SAMPLES[$SLURM_ARRAY_TASK_ID]}``` distributes jobs for the 4 samples
 5. Update trimmomatic ```input``` and ```output``` folder paths.
-
-<details><summary><strong>trimming.sbatch</strong></summary>
-
-```bash
-#!/bin/bash
-#SBATCH --job-name=trim_array
-#SBATCH --output=trim_logs/trim_%A_%a.out
-#SBATCH --error=trim_logs/trim_%A_%a.err
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=8G
-#SBATCH --time=01:00:00
-#SBATCH --array=0-3
-
-# 1. Load the module
-module load trimmomatic
-
-# 2. Define your sample names (Update these to match your actual file prefixes)
-SAMPLES=("SRR1039508" "SRR1039509" "SRR1039512" "SRR1039517")
-
-# Get the specific sample for this task
-SAMPLE=${SAMPLES[$SLURM_ARRAY_TASK_ID]}
-
-# 3. Setup Directories
-INPUT_DIR="path/to/input/files"
-OUTPUT_DIR="path/to/output/dir"
-ADAPTERS="TruSeq3-PE.fa"
-
-mkdir -p $OUTPUT_DIR
-mkdir -p trim_logs
-
-# 4. Run Trimmomatic
-# Note: This assumes your files are named SampleName_R1.fastq.gz
-trimmomatic PE -threads $SLURM_CPUS_PER_TASK \
-    ${INPUT_DIR}/${SAMPLE}_1.fastq.gz ${INPUT_DIR}/${SAMPLE}_2.fastq.gz \
-    ${OUTPUT_DIR}/${SAMPLE}_1_trimmed.fastq.gz ${OUTPUT_DIR}/${SAMPLE}_1_unpaired.fastq.gz \
-    ${OUTPUT_DIR}/${SAMPLE}_2_trimmed.fastq.gz ${OUTPUT_DIR}/${SAMPLE}_2_unpaired.fastq.gz \
-    ILLUMINACLIP:${ADAPTERS}:2:30:10 \
-    SLIDINGWINDOW:4:15 \
-    LEADING:3 \
-    TRAILING:3 \
-    MINLEN:36
-
-echo "Finished trimming $SAMPLE
-```
-</details>
+6. Save and exit the file, then submit with ```sbatch trimming.sbatch```.
 
 ## 4. Alignment
+
 For STAR alignment, instead of running a single SLURM job that loops through all FASTQ files sequentially (which is slow and inefficient), we can use SLURM job arrays. Job arrays allow us to process multiple FASTQ files in parallel, significantly speeding up the alignment step and making better use of cluster resources.
 
 0. Make a new directory for STAR outputs.
-1. Locate the file ```star_alignment.sh```.
+1. Locate the file ```star_alignment.sbatch```.
 2. Print the content of the file.
 3. Open the script with a file editor:
     - Change the desired parameters:
@@ -201,113 +137,14 @@ For STAR alignment, instead of running a single SLURM job that loops through all
         - Add a ```#SBATCH --array=``` line
         - Remove the for loop
         - Use ```$SLURM_ARRAY_TASK_ID``` to select one sample
-4. Submit the job with ```sbatch star_alignment.sh```
-5. Monitor your job with ```squeue -u $USERNAME``` and look at the output files of your jobs ```ls *.out```
-
-<details><summary><strong>star_alignemnt.sbatch</strong></summary>
-
-
-```bash
-#!/bin/bash
-
-#SBATCH -t 0-2:00 		# hours:minutes runlimit after which job will be killed
-#SBATCH -c 8 		# number of cores requested -- this needs to be greater than or equal to the number of cores you plan to use to run your job
-#SBATCH --mem 16G
-#SBATCH --job-name STAR_YOURNAME 		# Job name
-#SBATCH -o %j.out			# File to which standard out will be written
-#SBATCH -e %j.err 		# File to which standard err will be written
-
-for R1 in /PATH/TO/READS/*_1.fastq.gz
-do
-    # Extract sample name
-    SAMPLE=$(basename ${R1} _1.fastq.gz)
-
-    echo "Processing sample: ${SAMPLE}"
-
-    STAR --runThreadN 8 \
-         --genomeDir /PATH/TO/STAR_INDEX \
-         --readFilesIn /PATH/TO/READS/${SAMPLE}_1.fastq.gz /PATH/TO/READS/${SAMPLE}_2.fastq.gz \
-         --readFilesCommand zcat \
-         --outFileNamePrefix /PATH/TO/OUTPUT/${SAMPLE}_ \
-         --outSAMtype BAM SortedByCoordinate \
-         --outSAMunmapped Within \
-	     --outSAMattributes Standard \
-         --quantMode GeneCounts TranscriptomeSAM
-
-    echo "Finished sample: ${SAMPLE}"
-    echo "----------------------------------"
-done
-
-echo "All samples completed."
-```
-
-For all the available options, see [STAR's documentation](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf).
-
-</details>
+4. Submit the job with ```sbatch star_alignment.sbatch```
 
 ## 5. Counting
 
 This SLURM job submits featureCounts to the cluster to quantify reads per gene from all STAR-aligned BAM files in parallel.
 Before running, make sure to update the SBATCH job name, the GTF path, and the STAR output path, then submit with ```sbatch counting.sbatch```.
 
-<details><summary><strong>counting.sbatch</strong></summary>
-
-```bash
-#!/bin/bash
-#SBATCH --job-name=limma_USERNAME
-#SBATCH --output=workshop_%j.log
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=16G
-#SBATCH --time=02:00:00
-
-# 1. Load the necessary modules
-module load subread
-
-# 2. Set your paths (Change these to your actual folder paths!)
-GTF="PATH/TO/GTF/Homo_sapiens.GRCh38.115.gtf"
-BAM_FILES="PATH/TO/STAR/OUTPUTS/*_Aligned.sortedByCoord.out.bam"
-OUT_FILE="ASM_Dex_count_${USER}.txt"
-
-# 3. Run featureCounts (using 8 CPUs)
-echo "Starting featureCounts..."
-featureCounts -T 8 -p \
-  -a "$GTF" \
-  -o "$OUT_FILE" \
-  "$BAM_FILES"
-```
-
-</details>
-
 ## 6. DEA
 
 In this step, we submit a SLURM job to run the limma differential expression analysis on the count matrix generated by featureCounts as before.
 Before submitting, update the job name and the path to your count file, then run ```sbatch limma_analysis.sbatch``` and monitor the job with ```squeue -u $USER```.
-
-<details><summary><strong>limma_analysis.sbatch</strong></summary>
-
-```R
-#!/bin/bash
-
-#SBATCH -t 0-1:00              # Runtime (D-HH:MM)
-#SBATCH -c 4                   # Number of CPU cores
-#SBATCH --mem=8G               # Memory
-#SBATCH --job-name=limma_USER  # Change USER to your name
-#SBATCH -o %j.out              # Standard output
-#SBATCH -e %j.err              # Standard error
-
-# Load R module (modify if your cluster uses a different module name)
-ml r-base64 r-limma r-biobase
-
-# Run the R script
-Rscript ../07_DE/limma_analysis.R \
-/path/to/featureCounts/output/ASM_Dex_count_YOUR_USER.txt \
-/common/workshop_data/reference/hg38/release_115/gene_names.gtf
-
-echo "limma analysis completed."
-```
-
-</details>
-
-> ---------
-
->Important: Not all analyses benefit from SLURM submission. Lightweight scripts (such as limma statistical analysis) may actually run slower when submitted with sbatch due to queue wait times and scheduling overhead. Choose wisely when to use cluster resources vs. running interactively. Happy coding! 😊
