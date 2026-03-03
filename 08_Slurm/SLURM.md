@@ -165,6 +165,9 @@ What are the advantages of using SLURM for job scheduling on HPC clusters?
 </details>
 </br>
 
+---
+
+
 Why might your job stay in PD state even if nodes appear idle?
 <details><summary>Answer</summary>
 
@@ -175,6 +178,9 @@ Why might your job stay in PD state even if nodes appear idle?
 - Scheduling policies: The cluster's scheduling policies may affect job placement, leading to delays in job start time.
 </details>
 </br>
+
+---
+
 
 What happens if everyone requests 128 GB memory "just to be safe"?
 <details><summary>Answer</summary>
@@ -187,6 +193,9 @@ What happens if everyone requests 128 GB memory "just to be safe"?
 </details>
 </br>
 
+---
+
+
 What is the difference between AllocTRES and ReqTRES?
 <details><summary>Answer</summary>
 
@@ -195,6 +204,8 @@ What is the difference between AllocTRES and ReqTRES?
 - ReqTRES (Requested Trackable RESources): This represents the resources that a user has requested for their job. It indicates the resources that the user has specified as needed for their job to run, but it may not reflect the actual resources allocated by the scheduler, which can be less than or equal to the requested resources based on availability and scheduling policies.
 </details>
 </br>
+
+---
 
 Why should you never run STAR on the login node?
 <details><summary>Answer</summary>
@@ -207,13 +218,17 @@ Why should you never run STAR on the login node?
 </details>
 </br>
 
+---
+
 How would you check how many CPUs were allocated?
 <details><summary>Answer</summary>
 You can check how many CPUs were allocated to your job by using the `scontrol show job <job_id>` command, where `<job_id>` is the ID of your job. Look for the `NumCPUs` field in the output. Also running `echo $SLURM_CPUS_PER_TASK` inside your batch script.
 </details>
+</br>
+
+---
 
 Does --array=0-3 guarantee 4 parallel executions?
 <details><summary>Answer</summary>
 No. It submits 4 jobs, but concurrency depends on available resources.
 </details>
-
