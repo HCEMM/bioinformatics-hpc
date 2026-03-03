@@ -1,41 +1,46 @@
 #!/bin/bash
 #SBATCH --job-name=trim_array
-#SBATCH --output=trim_logs/trim_%A_%a.out
-#SBATCH --error=trim_logs/trim_%A_%a.err
+#SBATCH --output=logs/trim_%A_%a.out
+#SBATCH --error=logs/trim_%A_%a.err
 #SBATCH --nodes=1
-#SBATCH --ntasks=1
+#SBATCH --ntasks=1          # still 1!
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=8G
-#SBATCH --time=01:00:00
+#SBATCH --mem=16G
+#SBATCH --time=02:00:00
 #SBATCH --array=0-3
 
-# 1. Load the module
-module load trimmomatic
+# Get the current time
+START_TIME=$(date +"%Y-%m-%d %H:%M:%S"); START_SECONDS=$(date +%s)
+echo "Starting FastQC analysis at: $START_TIME"
 
-# 2. Define your sample names (Update these to match your actual file prefixes)
-SAMPLES=("SRR1039508" "SRR1039509" "SRR1039512" "SRR1039517")
+# Load the module
+
+
+# Define your sample names (Update these to match your actual file prefixes)
+SAMPLES=
 
 # Get the specific sample for this task
 SAMPLE=${SAMPLES[$SLURM_ARRAY_TASK_ID]}
 
-# 3. Setup Directories
-INPUT_DIR="path/to/input/files"
-OUTPUT_DIR="path/to/output/dir"
-ADAPTERS="TruSeq3-PE.fa"
+# Setup Directories
+INPUT_DIR=
+OUTPUT_DIR=
+ADAPTERS=
 
+# Make output directory
 mkdir -p $OUTPUT_DIR
-mkdir -p trim_logs
 
-# 4. Run Trimmomatic
-# Note: This assumes your files are named SampleName_R1.fastq.gz
-trimmomatic PE -threads $SLURM_CPUS_PER_TASK \
-    ${INPUT_DIR}/${SAMPLE}_1.fastq.gz ${INPUT_DIR}/${SAMPLE}_2.fastq.gz \
-    ${OUTPUT_DIR}/${SAMPLE}_1_trimmed.fastq.gz ${OUTPUT_DIR}/${SAMPLE}_1_unpaired.fastq.gz \
-    ${OUTPUT_DIR}/${SAMPLE}_2_trimmed.fastq.gz ${OUTPUT_DIR}/${SAMPLE}_2_unpaired.fastq.gz \
-    ILLUMINACLIP:${ADAPTERS}:2:30:10 \
-    SLIDINGWINDOW:4:15 \
-    LEADING:3 \
-    TRAILING:3 \
-    MINLEN:36
+# Run Trimmomatic
+# - TruSeq3 adapters
+# - Sliding window for each 5 reads, cut if average quality drops below 25
+# - Remove leading bases with quality below 5
+# - Remove trailing bases with quality below 4
+# - Minimum read length of 36 after trimming
 
-echo "Finished trimming $SAMPLE
+
+# Calculate runtime
+RUNTIME=$((END_SECONDS - START_SECONDS))
+HOURS=$((RUNTIME / 3600))
+MINUTES=$(((RUNTIME % 3600) / 60))
+SECONDS=$((RUNTIME % 60))
+echo "Total runtime: ${HOURS}h ${MINUTES}m ${SECONDS}s"

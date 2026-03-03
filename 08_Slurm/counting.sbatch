@@ -9,9 +9,9 @@
 module load subread
 
 # 2. Set your paths (Change these to your actual folder paths!)
-GTF="PATH/TO/GTF/Homo_sapiens.GRCh38.115.gtf"
-BAM_FILES="PATH/TO/STAR/OUTPUTS/*_Aligned.sortedByCoord.out.bam"
-OUT_FILE="ASM_Dex_count_${USER}.txt"
+GTF=
+BAM_FILES=    # use wildcards!
+OUT_FILE=
 
 # 3. Run featureCounts (using 8 CPUs)
 echo "Starting featureCounts..."

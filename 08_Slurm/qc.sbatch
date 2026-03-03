@@ -1,31 +1,36 @@
 #!/bin/bash
-#SBATCH --job-name=YOUR_NAME_fastqc
-#SBATCH --time=01:00:00
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=8G
-#SBATCH --output=fastqc_%j.out
-#SBATCH --error=fastqc_%j.err
+#SBATCH --job-name=
+#SBATCH --time=
+#SBATCH --cpus-per-task=
+#SBATCH --mem=
+#SBATCH --output=
+#SBATCH --error=
 
-# -----------------------------
-# Load required module
-# -----------------------------
-module load fastqc
+THREADS=
+INPUT_DIR=
+OUTPUT_DIR=
 
-# -----------------------------
-# USER MUST MODIFY THESE
-# -----------------------------
-THREADS=4
-INPUT_DIR="/common/workshop_data/raw_data"
-OUTPUT_DIR="./fastqc_results"
+# Get the current time
+START_TIME=$(date +"%Y-%m-%d %H:%M:%S"); START_SECONDS=$(date +%s)
+echo "Starting FastQC analysis at: $START_TIME"
 
-# -----------------------------
-# Create output directory
-# -----------------------------
-mkdir -p $OUTPUT_DIR
+# Load FastQC module
 
-# -----------------------------
+
+# Make FastQC output directory
+
+
 # Run FastQC
-# -----------------------------
-fastqc -t $THREADS ${INPUT_DIR}/*.fastq.gz -o $OUTPUT_DIR
 
-echo "FastQC analysis complete"
+
+# Get current time
+END_TIME=$(date +"%Y-%m-%d %H:%M:%S"); END_SECONDS=$(date +%s)
+
+echo "FastQC analysis complete at: $END_TIME"
+
+# Calculate runtime
+RUNTIME=$((END_SECONDS - START_SECONDS))
+HOURS=$((RUNTIME / 3600))
+MINUTES=$(((RUNTIME % 3600) / 60))
+SECONDS=$((RUNTIME % 60))
+echo "Total runtime: ${HOURS}h ${MINUTES}m ${SECONDS}s"

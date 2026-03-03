@@ -7,12 +7,24 @@
 #SBATCH -o %j.out              # Standard output
 #SBATCH -e %j.err              # Standard error
 
-# Load R module (modify if your cluster uses a different module name)
-ml r-base64 r-limma r-biobase
+# Get the current time
+START_TIME=$(date +"%Y-%m-%d %H:%M:%S"); START_SECONDS=$(date +%s)
+echo "Starting FastQC analysis at: $START_TIME"
+
+# Load R modules
+
+
+# Define variables
+COUNTS=
+GENE_NAMES=
+OUTPUT_DIR=
 
 # Run the R script
-Rscript ../07_DE/limma_analysis.R \
-/path/to/featureCounts/output/ASM_Dex_count_YOUR_USER.txt \
-/common/workshop_data/reference/hg38/release_115/gene_names.gtf
+Rscript /common/workshop_data/scripts/limma_analysis.R ${COUNTS} ${GENE_NAMES} ${OUTPUT_DIR}
 
-echo "limma analysis completed."
+# Calculate runtime
+RUNTIME=$((END_SECONDS - START_SECONDS))
+HOURS=$((RUNTIME / 3600))
+MINUTES=$(((RUNTIME % 3600) / 60))
+SECONDS=$((RUNTIME % 60))
+echo "Total runtime: ${HOURS}h ${MINUTES}m ${SECONDS}s"
