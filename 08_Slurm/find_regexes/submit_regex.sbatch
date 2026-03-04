@@ -4,28 +4,38 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=1G
 
+REQUIRED_LENGTH=10
+
 REGEX="$1"
 FASTQ="/common/workshop_data/raw_data/SRR1039508_1.fastq"
-HIGHSCORE="/playground/highscore_string.txt"
+HIGHSCORE="/playground/highscore_regex.txt"
 LOCKFILE="/playground/.lockfile"
 
-# Count matches only in sequence lines
+if [[ -z "$REGEX" ]]; then
+    echo "Error: You must provide a regex."
+    exit 1
+fi
+
+# Enforce literal length
+if [[ ${#REGEX} -ne $REQUIRED_LENGTH ]]; then
+    echo "Error: Regex must be exactly $REQUIRED_LENGTH characters long."
+    echo "You provided ${#REGEX} characters."
+    exit 1
+fi
+
+# Count matches in sequence lines
 COUNT=$(awk 'NR%4==2' "$FASTQ" | grep -E "$REGEX" | wc -l)
 
-# Metadata
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 USER_NAME=$(whoami)
 GROUP_NAME=$(id -gn)
 
 ENTRY="$COUNT | $TIMESTAMP | $USER_NAME | $GROUP_NAME | $REGEX"
 
-# Critical section (prevent race conditions)
 (
   flock -x 200
-
   echo "$ENTRY" >> "$HIGHSCORE"
   sort -t'|' -k1,1nr "$HIGHSCORE" -o "$HIGHSCORE"
-
 ) 200>"$LOCKFILE"
 
 echo "Your score: $COUNT"
