@@ -5,9 +5,9 @@
 #SBATCH --mem=1G
 
 REGEX="$1"
-FASTQ="/nfs/regex_game/fastq/sample.fastq"
-HIGHSCORE="/nfs/regex_game/highscore.txt"
-LOCKFILE="/nfs/regex_game/.lockfile"
+FASTQ="/common/workshop_data/raw_data/SRR1039508_1.fastq"
+HIGHSCORE="/playground/highscore_string.txt"
+LOCKFILE="/playground/.lockfile"
 
 # Count matches only in sequence lines
 COUNT=$(awk 'NR%4==2' "$FASTQ" | grep -E "$REGEX" | wc -l)
