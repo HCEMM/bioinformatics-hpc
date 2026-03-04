@@ -45,11 +45,23 @@ sinfo --format=%all                         # all the details
 
 ### Some useful Slurm commands
 
+**Submit job**
+```
+srun hostname; sleep 60
+```
+What does the printed value show?
+Did the hostname match the login node?
+
 **See running job**
 ```bash
 squeue
 squeue -u {YOUR_USERNAME}
 sq
+```
+
+**See default values**
+```bash
+scontrol show partition [partition]
 ```
 
 **Cancel the job!**
@@ -69,13 +81,10 @@ sacct -u {YOUR_USERNAME}
 sac                         # more informative
 ```
 
-## Test run
-
+**Create interactive job**
+```bash
+salloc --time=00:30:00 --ntasks=1 --cpus-per-task=4 --mem=16G
 ```
-srun hostname
-```
-What does the printed value show?
-Did the hostname match the login node?
 
 ## 0. Tumor simulation
 
