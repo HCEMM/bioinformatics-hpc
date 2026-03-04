@@ -1,6 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=sra_download
 #SBATCH --time=01:00:00
+#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --output=logs/sra_download_%j.out
