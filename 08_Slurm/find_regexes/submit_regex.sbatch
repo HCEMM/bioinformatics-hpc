@@ -3,11 +3,13 @@
 #SBATCH --time=00:05:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=1G
+#SBATCH --output=/playground/logs/regex_game_%u_%j.out
+#SBATCH --error=/playground/logs/regex_game_%u_%j.err
 
 REQUIRED_LENGTH=10
 
 REGEX="$1"
-FASTQ="/common/workshop_data/raw_data/SRR1039508_1.fastq"
+FASTQ="/playground/filtered.fastq"
 HIGHSCORE="/playground/highscore_regex.txt"
 LOCKFILE="/playground/.lockfile"
 
