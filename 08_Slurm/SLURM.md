@@ -45,6 +45,21 @@ sinfo --format=%all                         # all the details
 
 ### Some useful Slurm commands
 
+**See default values**
+```bash
+scontrol show partition [partition]
+```
+
+**Default values cluster wide**
+```bash
+scontrol show config | grep -E "DefMem|MaxMem|DefTime|Scheduler"
+```
+
+**Values used in your job**
+```bash
+scontrol show job [jobid]
+```
+
 **Submit job**
 ```
 srun hostname; sleep 60
@@ -59,12 +74,7 @@ squeue -u {YOUR_USERNAME}
 sq
 ```
 
-**See default values**
-```bash
-scontrol show partition [partition]
-```
-
-**Cancel the job!**
+**Cancel the job**
 ```bash
 scancel [jobid]
 sq                  # should be empty
@@ -84,6 +94,11 @@ sac                         # more informative
 **Create interactive job**
 ```bash
 salloc --time=00:30:00 --ntasks=1 --cpus-per-task=4 --mem=16G
+```
+
+**Inside interactive job, see SLURM environment variables**
+```bash
+env | grep SLURM
 ```
 
 ## 0. Tumor simulation

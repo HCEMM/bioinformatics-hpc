@@ -1,31 +1,53 @@
 #!/bin/bash
-#SBATCH --job-name=regex_game
+#SBATCH --job-name=stringx_game
 #SBATCH --time=00:05:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=1G
+#SBATCH --output=/playground/logs/stringx_game_%u_%j.out
+#SBATCH --error=/playground/logs/stringx_game_%u_%j.err
 
-REGEX="$1"
-FASTQ="/nfs/regex_game/fastq/sample.fastq"
-HIGHSCORE="/nfs/regex_game/highscore.txt"
-LOCKFILE="/nfs/regex_game/.lockfile"
+### ---- HARD CODED LENGTH ----
+REQUIRED_LENGTH=10
+### ---------------------------
 
-# Count matches only in sequence lines
-COUNT=$(awk 'NR%4==2' "$FASTQ" | grep -E "$REGEX" | wc -l)
+STRING="$1"
+FASTQ="/playground/filtered.fastq"
+HIGHSCORE="/playground/highscore_string.txt"
+LOCKFILE="/playground/.lockfile"
+
+# Validate input exists
+if [[ -z "$STRING" ]]; then
+    echo "Error: You must provide a DNA string."
+    exit 1
+fi
+
+# Enforce exact length
+if [[ ${#STRING} -ne $REQUIRED_LENGTH ]]; then
+    echo "Error: String must be exactly $REQUIRED_LENGTH characters long."
+    exit 1
+fi
+
+# Allow only ACGT
+if [[ ! "$STRING" =~ ^[ACGT]+$ ]]; then
+    echo "Error: Only A, C, G, T allowed."
+    exit 1
+fi
+
+# Count matches (literal search)
+COUNT=$(awk 'NR%4==2' "$FASTQ" | grep -F "$STRING" | wc -l)
 
 # Metadata
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 USER_NAME=$(whoami)
 GROUP_NAME=$(id -gn)
 
-ENTRY="$COUNT | $TIMESTAMP | $USER_NAME | $GROUP_NAME | $REGEX"
+ENTRY="$COUNT | $TIMESTAMP | $USER_NAME | $GROUP_NAME | $STRING"
 
-# Critical section (prevent race conditions)
+# Critical section
 (
   flock -x 200
-
   echo "$ENTRY" >> "$HIGHSCORE"
   sort -t'|' -k1,1nr "$HIGHSCORE" -o "$HIGHSCORE"
-
 ) 200>"$LOCKFILE"
 
 echo "Your score: $COUNT"
